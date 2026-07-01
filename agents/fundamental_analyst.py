@@ -8,7 +8,8 @@ from openai_sdk import Agent, ModelSettings
 # Import tools
 from tools.stock_data import get_stock_info, get_fundamentals
 
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 FUNDAMENTAL_ANALYST_INSTRUCTIONS = """
@@ -78,7 +79,7 @@ so they can continue with other analysts and generate the final report.
 fundamental_analyst_agent = Agent(
     name="Fundamental Analyst",
     instructions=FUNDAMENTAL_ANALYST_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=AGENT_TEMPERATURE,
     ),

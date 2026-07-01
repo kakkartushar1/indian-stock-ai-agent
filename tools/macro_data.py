@@ -10,6 +10,11 @@ from datetime import datetime, timedelta
 import json
 import requests
 from bs4 import BeautifulSoup
+from pathlib import Path
+
+_YFINANCE_CACHE_DIR = Path(__file__).resolve().parents[1] / ".cache" / "yfinance"
+_YFINANCE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+yf.set_tz_cache_location(str(_YFINANCE_CACHE_DIR))
 
 
 def _safe_get(data: dict, key: str, default=None):

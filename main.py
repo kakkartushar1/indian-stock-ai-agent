@@ -26,7 +26,8 @@ from agent import (
 )
 from agents import Runner
 from agents.pipeline_orchestrator import run_full_analysis_with_pdf
-from config import MAX_TURNS, MODEL_NAME
+from config import MAX_TURNS
+from llm_provider import get_configuration_error, get_provider_status, is_llm_configured
 import re
 
 # Use multi-agent system by default
@@ -83,11 +84,13 @@ def print_help():
         - Professional PDF report generation
 
     ENVIRONMENT SETUP:
-        Set your OpenAI API key:
-        export OPENAI_API_KEY=your-api-key-here
+        Set your LLM provider and API key:
+        LLM_PROVIDER=openai
+        OPENAI_API_KEY=your-api-key-here
 
         Or create a .env file:
-        OPENAI_API_KEY=your-api-key-here
+        LLM_PROVIDER=groq
+        GROQ_API_KEY=your-groq-key
     """
     print(help_text)
 
@@ -168,7 +171,7 @@ async def single_query_mode(query: str):
             import traceback
             traceback.print_exc()
             print("\nPlease check:")
-            print("1. Your OPENAI_API_KEY is set correctly")
+            print("1. Your LLM_PROVIDER and provider API key are set correctly")
             print("2. You have internet connectivity")
             print("3. The stock symbol is valid")
 
@@ -196,8 +199,55 @@ async def single_query_mode(query: str):
         except Exception as e:
             print(f"\n[ERROR]: {str(e)}")
             print("\nPlease check:")
-            print("1. Your OPENAI_API_KEY is set correctly")
+            print("1. Your LLM_PROVIDER and provider API key are set correctly")
             print("2. You have internet connectivity")
+            print("3. The stock symbol is valid")
+
+
+async def pipeline_interactive_session():
+    """Run interactive CLI queries through the sequential pipeline."""
+    print("\n" + "="*60)
+    print("  INDIAN STOCK ANALYST AI (Pipeline System)")
+    print("  Powered by OpenAI Agents SDK")
+    print("="*60)
+    print("\nWelcome! I can help you analyze Indian stocks (NSE/BSE).")
+    print("Ask me about any stock, e.g., 'Should I buy RELIANCE?'")
+    print("\n[Pipeline Mode Active]")
+    print("- Runs specialist agents sequentially")
+    print("- Avoids provider-specific handoff tool schema issues")
+    print("- Generates a PDF report when analysis completes")
+    print("\nType 'quit' or 'exit' to end the session.\n")
+
+    while True:
+        try:
+            user_input = input("\nYou: ").strip()
+
+            if not user_input:
+                continue
+
+            if user_input.lower() in ['quit', 'exit', 'q']:
+                print("\nThank you for using Indian Stock Analyst AI. Goodbye!")
+                break
+
+            print("\nAnalyzing... (this may take a moment)\n")
+            stock_symbol = extract_stock_symbol(user_input)
+            print(f"[Detected Stock]: {stock_symbol}")
+
+            result = await run_full_analysis_with_pdf(stock_symbol, user_input)
+            try:
+                print(f"\n{result}")
+            except UnicodeEncodeError:
+                safe_result = result.encode('ascii', 'replace').decode('ascii')
+                print(f"\n{safe_result}")
+
+        except KeyboardInterrupt:
+            print("\n\nSession interrupted. Goodbye!")
+            break
+        except Exception as e:
+            print(f"\nError: {str(e)}")
+            print("\nPlease check:")
+            print("1. Your LLM_PROVIDER and provider API key are set correctly")
+            print("2. Your selected MODEL_NAME supports tool/function calling")
             print("3. The stock symbol is valid")
 
 
@@ -205,14 +255,11 @@ async def main():
     """Main entry point."""
     print_banner()
 
-    # Check for API key
-    api_key = os.getenv("OPENAI_API_KEY", "")
-    if not api_key:
-        print("\n[WARNING]: OPENAI_API_KEY not set!")
-        print("Please set your API key:")
-        print("  export OPENAI_API_KEY=your-api-key-here")
-        print("\nOr create a .env file with:")
-        print("  OPENAI_API_KEY=your-api-key-here\n")
+    # Check selected LLM provider configuration.
+    if not is_llm_configured():
+        print("\n[WARNING]: LLM provider is not fully configured!")
+        print(f"Details: {get_configuration_error()}")
+        print("Set LLM_PROVIDER plus the matching API key in .env, then restart.\n")
 
     # Parse command line arguments
     if len(sys.argv) > 1:
@@ -227,12 +274,16 @@ async def main():
         await single_query_mode(query)
     else:
         # Interactive mode
-        print(f"\n[Model]: {MODEL_NAME}")
+        provider_status = get_provider_status()
+        print(f"\n[Provider]: {provider_status.get('provider')} / {provider_status.get('model')}")
         mode_str = "Pipeline (9 agents sequential)" if USE_PIPELINE_MODE else ("Multi-Agent" if USE_MULTI_AGENT else "Single-Agent")
         print(f"[Mode]: {mode_str}")
         print(f"[Reports]: Will be saved to: reports/")
         print("\nEnter a stock query (e.g., 'Analyze RELIANCE') or 'quit' to exit.\n")
-        await interactive_session(use_multi_agent=USE_MULTI_AGENT)
+        if USE_PIPELINE_MODE:
+            await pipeline_interactive_session()
+        else:
+            await interactive_session(use_multi_agent=USE_MULTI_AGENT)
 
 
 if __name__ == "__main__":

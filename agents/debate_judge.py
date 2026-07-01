@@ -4,7 +4,8 @@ Acts as an impartial arbitrator to produce the most balanced and accurate assess
 """
 
 from openai_sdk import Agent, ModelSettings
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 DEBATE_JUDGE_INSTRUCTIONS = """
@@ -151,7 +152,7 @@ so they can continue with the Risk Manager and generate the final report.
 debate_judge_agent = Agent(
     name="Debate Judge",
     instructions=DEBATE_JUDGE_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=0.2,  # Lower temperature for more consistent judging
     ),

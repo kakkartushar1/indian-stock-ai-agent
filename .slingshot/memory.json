@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-07-01T07:56:40.491Z",
+  "user_memory": [],
+  "slingshot_memory": [
+    {
+      "id": "mem_1782892600488_9m6mev",
+      "content": "Indian stock AI agent project uses a BYOLLM pattern in llm_provider.py with OpenAI Agents SDK; Mistral provider uses https://api.mistral.ai/v1 base URL.",
+      "createdAt": "2026-07-01T07:56:40.488Z",
+      "updatedAt": "2026-07-01T07:56:40.488Z",
+      "isEnabled": true
+    },
+    {
+      "id": "mem_1782892600491_metopf",
+      "content": "Project has a fallback helper _call_mistral_with_fallback in llm_provider.py that rotates MISTRAL_API_KEY_PRIMARY/SECONDARY/TERTIARY on 429 errors only.",
+      "createdAt": "2026-07-01T07:56:40.491Z",
+      "updatedAt": "2026-07-01T07:56:40.491Z",
+      "isEnabled": true
+    }
+  ]
+}

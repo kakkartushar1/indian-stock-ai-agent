@@ -26,7 +26,8 @@ from .portfolio_analyst import portfolio_analyst_agent
 # Import PDF generator
 from pdf_generator import create_stock_report
 
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 ORCHESTRATOR_INSTRUCTIONS = """
@@ -263,7 +264,7 @@ comprehensive, actionable insights that exceed what any single analyst could pro
 stock_orchestrator_agent = Agent(
     name="Stock Analysis Orchestrator",
     instructions=ORCHESTRATOR_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=AGENT_TEMPERATURE,
     ),
@@ -308,7 +309,7 @@ Keep the analysis concise but actionable.
 quick_orchestrator_agent = Agent(
     name="Quick Stock Analyst",
     instructions=QUICK_ORCHESTRATOR_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=AGENT_TEMPERATURE,
     ),

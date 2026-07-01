@@ -5,7 +5,8 @@ This agent specifically argues FOR buying/holding a stock.
 """
 
 from openai_sdk import Agent, ModelSettings
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 BULL_AGENT_INSTRUCTIONS = """
@@ -100,7 +101,7 @@ so they can continue with the Bear Advocate and other phases.
 bull_agent = Agent(
     name="Bull Advocate",
     instructions=BULL_AGENT_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=0.5,  # Slightly higher for creative bull arguments
     ),

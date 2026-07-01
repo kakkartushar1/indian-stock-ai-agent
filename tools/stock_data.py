@@ -8,6 +8,11 @@ from agents import function_tool
 from typing import Optional
 from datetime import datetime
 import json
+from pathlib import Path
+
+_YFINANCE_CACHE_DIR = Path(__file__).resolve().parents[1] / ".cache" / "yfinance"
+_YFINANCE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+yf.set_tz_cache_location(str(_YFINANCE_CACHE_DIR))
 
 
 def _normalize_symbol(symbol: str) -> str:

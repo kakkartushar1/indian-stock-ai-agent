@@ -15,7 +15,8 @@ from tools.macro_data import (
     get_global_market_context,
 )
 
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 MACRO_ANALYST_INSTRUCTIONS = """
@@ -120,7 +121,7 @@ so they can continue with other analysts and generate the final report.
 macro_analyst_agent = Agent(
     name="Macro Analyst",
     instructions=MACRO_ANALYST_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=AGENT_TEMPERATURE,
     ),

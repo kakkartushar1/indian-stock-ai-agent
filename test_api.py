@@ -1,5 +1,5 @@
 """
-Quick OpenAI API key health check.
+Quick BYOLLM provider health check.
 
 Usage:
     python test_api.py
@@ -7,10 +7,14 @@ Usage:
 """
 
 import argparse
-import os
 import sys
+from dataclasses import replace
+
+import httpx
 from dotenv import load_dotenv
 from openai import OpenAI
+
+from llm_provider import LLMConfigurationError, get_provider_status, load_llm_config
 
 
 def mask_key(key: str) -> str:
@@ -23,32 +27,42 @@ def main() -> int:
     load_dotenv()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", default=os.getenv("MODEL_NAME", "gpt-4o-mini"))
+    parser.add_argument("--model", help="Override MODEL_NAME for this health check.")
     args = parser.parse_args()
 
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
-
-    if not api_key:
-        print("[FAIL] OPENAI_API_KEY is missing.")
+    try:
+        config = load_llm_config()
+    except LLMConfigurationError as exc:
+        print(f"[FAIL] {exc}")
         return 1
 
-    print(f"[INFO] Key detected: {mask_key(api_key)}")
-    print(f"[INFO] Testing model: {args.model}")
+    if args.model:
+        config = replace(config, model_name=args.model)
+
+    status = get_provider_status()
+    print(f"[INFO] Provider: {config.provider}")
+    print(f"[INFO] Base URL host: {status.get('base_url_host') or 'default OpenAI'}")
+    print(f"[INFO] Key detected: {mask_key(config.api_key)}")
+    print(f"[INFO] Testing model: {config.model_name}")
 
     try:
-        base_url = os.getenv("OPENAI_BASE_URL", None)
-        kwargs = dict(api_key=api_key, timeout=20.0, max_retries=0)
-        if base_url:
-            import httpx
-            kwargs["base_url"] = base_url
+        kwargs = dict(
+            api_key=config.api_key,
+            timeout=20.0,
+            max_retries=0,
+            default_headers=config.default_headers or None,
+        )
+        if config.base_url:
+            kwargs["base_url"] = config.base_url
+        if not config.verify_ssl:
             kwargs["http_client"] = httpx.Client(verify=False)
         client = OpenAI(**kwargs)
-        response = client.responses.create(
-            model=args.model,
-            input="Reply with exactly: API_OK",
-            max_output_tokens=16,
+        response = client.chat.completions.create(
+            model=config.model_name,
+            messages=[{"role": "user", "content": "Reply with exactly: API_OK"}],
+            max_tokens=16,
         )
-        text = (response.output_text or "").strip()
+        text = (response.choices[0].message.content or "").strip()
         print(f"[OK] API request succeeded. Response: {text!r}")
         return 0
     except Exception as exc:

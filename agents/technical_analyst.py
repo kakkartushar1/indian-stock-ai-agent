@@ -13,7 +13,8 @@ from tools.technical_analysis import (
 )
 from tools.stock_data import get_stock_price, get_historical_data
 
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 TECHNICAL_ANALYST_INSTRUCTIONS = """
@@ -106,7 +107,7 @@ so they can continue with other analysts and generate the final report.
 technical_analyst_agent = Agent(
     name="Technical Analyst",
     instructions=TECHNICAL_ANALYST_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=AGENT_TEMPERATURE,
     ),

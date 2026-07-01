@@ -14,6 +14,7 @@ import asyncio
 import yfinance as yf
 import json
 from typing import Callable, Optional
+from pathlib import Path
 from openai_sdk import Agent, Runner, ModelSettings
 
 # Import all specialist agents
@@ -33,7 +34,12 @@ from pdf_generator import generate_stock_report, StockReportData, create_stock_r
 from tools.technical_analysis import get_technical_indicators, get_support_resistance, analyze_trend
 from tools.risk_management import assess_trade_risk_reward, calculate_stop_loss_levels
 
-from config import MODEL_NAME, AGENT_TEMPERATURE, MAX_TURNS
+from config import AGENT_TEMPERATURE, MAX_TURNS
+from llm_provider import get_agent_model
+
+_YFINANCE_CACHE_DIR = Path(__file__).resolve().parents[1] / ".cache" / "yfinance"
+_YFINANCE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+yf.set_tz_cache_location(str(_YFINANCE_CACHE_DIR))
 
 
 def _is_error_text(value: str | None) -> bool:
@@ -626,7 +632,7 @@ REMEMBER: If stop_loss > current_price, you have extracted the WRONG value!
 final_orchestrator_agent = Agent(
     name="Final Report Generator",
     instructions=FINAL_ORCHESTRATOR_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=0.2,
     ),
@@ -955,7 +961,7 @@ async def run_full_analysis_with_pdf(
         raise RuntimeError(
             "Analysis pipeline failed: 0/10 agents succeeded. "
             f"First error: {first_error}. "
-            "Check OPENAI model access (MODEL_NAME) and API permissions."
+            "Check selected LLM provider model access (MODEL_NAME) and API permissions."
         )
 
     # Step 2: Format the report

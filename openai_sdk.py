@@ -8,6 +8,8 @@ manipulating sys.path to exclude the local directory.
 
 import sys
 import os
+import atexit
+import importlib
 from contextlib import contextmanager
 from dotenv import load_dotenv
 
@@ -45,13 +47,29 @@ try:
         p_norm = os.path.normpath(resolved).lower()
         stock_norm = os.path.normpath(_stock_agent_dir).lower()
 
-        if p_norm != stock_norm and not p_norm.startswith(stock_norm):
+        # Exclude only the project root so `import agents` does not resolve to
+        # the local agents/ package. Keep nested entries such as
+        # venv/Lib/site-packages, where the OpenAI Agents SDK is installed.
+        if p_norm != stock_norm:
             clean_path.append(p)
 
     sys.path = clean_path
 
     # Now import the SDK
     import agents as _sdk
+
+    def _unregister_sdk_trace_shutdown():
+        tracing_setup = importlib.import_module('agents.tracing.setup')
+        shutdown_trace_provider = getattr(tracing_setup, '_shutdown_global_trace_provider', None)
+        if shutdown_trace_provider is None:
+            return
+        try:
+            atexit.unregister(shutdown_trace_provider)
+        except Exception:
+            pass
+
+    _unregister_sdk_trace_shutdown()
+
     _sdk_modules_snapshot = {
         key: value
         for key, value in sys.modules.items()
@@ -60,7 +78,10 @@ try:
 
     # Get the components we need
     ModelSettings = _sdk.ModelSettings
+    AsyncOpenAI = _sdk.AsyncOpenAI
+    OpenAIChatCompletionsModel = _sdk.OpenAIChatCompletionsModel
     _sdk_function_tool = getattr(_sdk, 'function_tool', lambda x: x)
+    _sdk_set_tracing_disabled = getattr(_sdk, 'set_tracing_disabled', lambda disabled: None)
     handoff = getattr(_sdk, 'handoff', None)
     SDK_AVAILABLE = True
 
@@ -156,9 +177,23 @@ if SDK_AVAILABLE:
 
     def function_tool(func=None, **kwargs):
         """SDK function_tool with namespace guard."""
+        provider = os.getenv("LLM_PROVIDER", "openai").strip().lower() or "openai"
+        uses_compatible_endpoint = provider != "openai" or bool(
+            os.getenv("LLM_BASE_URL", "").strip() or os.getenv("OPENAI_BASE_URL", "").strip()
+        )
+        if uses_compatible_endpoint and "strict_mode" not in kwargs:
+            kwargs["strict_mode"] = False
         with _sdk_namespace():
             decorated = _sdk_function_tool(func, **kwargs) if func is not None else _sdk_function_tool(**kwargs)
         return decorated
+
+
+    def set_tracing_disabled(disabled=True):
+        """SDK tracing control with namespace guard."""
+        with _sdk_namespace():
+            result = _sdk_set_tracing_disabled(disabled)
+            _unregister_sdk_trace_shutdown()
+            return result
 
 # Fallback stubs if SDK not available
 if not SDK_AVAILABLE:
@@ -192,6 +227,16 @@ if not SDK_AVAILABLE:
         def __init__(self, temperature=0.7, **kwargs):
             self.temperature = temperature
 
+    class AsyncOpenAI:
+        """Fallback AsyncOpenAI stub."""
+        def __init__(self, *args, **kwargs):
+            raise NotImplementedError(f"OpenAI Agents SDK not available: {_import_error}")
+
+    class OpenAIChatCompletionsModel:
+        """Fallback OpenAIChatCompletionsModel stub."""
+        def __init__(self, *args, **kwargs):
+            raise NotImplementedError(f"OpenAI Agents SDK not available: {_import_error}")
+
     def function_tool(func):
         """Fallback function_tool decorator."""
         return func
@@ -199,6 +244,10 @@ if not SDK_AVAILABLE:
     def handoff(agent, **kwargs):
         """Fallback handoff function."""
         return agent
+
+    def set_tracing_disabled(disabled=True):
+        """Fallback tracing control."""
+        return None
 
 # Debug info
 def get_import_error():

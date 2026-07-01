@@ -31,7 +31,8 @@ from tools.exa_research import (
 # Also import original sentiment tools for compatibility
 from tools.sentiment_analyzer import analyze_news_sentiment, get_sentiment_score
 
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 NEWS_INTELLIGENCE_INSTRUCTIONS = """
@@ -178,7 +179,7 @@ so they can continue with other analysts and generate the final report.
 news_intelligence_agent = Agent(
     name="News Intelligence Analyst",
     instructions=NEWS_INTELLIGENCE_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=AGENT_TEMPERATURE,
     ),

@@ -14,7 +14,8 @@ from tools.document_analyzer import (
     get_peer_comparison,
 )
 
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 DOCUMENT_ANALYST_INSTRUCTIONS = """
@@ -153,7 +154,7 @@ so they can continue with other analysts and generate the final report.
 document_analyst_agent = Agent(
     name="Document Analyst",
     instructions=DOCUMENT_ANALYST_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=AGENT_TEMPERATURE,
     ),

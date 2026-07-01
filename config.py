@@ -19,6 +19,12 @@ def _env_int(name: str, default: int) -> int:
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
 
+# Mistral API Keys (primary, secondary, tertiary for fallback support)
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")
+MISTRAL_API_KEY_PRIMARY = os.getenv("MISTRAL_API_KEY_PRIMARY", None)
+MISTRAL_API_KEY_SECONDARY = os.getenv("MISTRAL_API_KEY_SECONDARY", None)
+MISTRAL_API_KEY_TERTIARY = os.getenv("MISTRAL_API_KEY_TERTIARY", None)
+
 # Exa MCP HTTP (no API key required when endpoint is already provisioned)
 EXA_MCP_HTTP_URL = os.getenv(
     "EXA_MCP_HTTP_URL",

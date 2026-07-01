@@ -13,7 +13,8 @@ from tools.risk_management import (
     calculate_max_allocation,
 )
 
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 RISK_MANAGER_INSTRUCTIONS = """
@@ -167,7 +168,7 @@ so they can synthesize all inputs and generate the final PDF report.
 risk_manager_agent = Agent(
     name="Risk Manager",
     instructions=RISK_MANAGER_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=0.2,  # Lower temperature for consistent risk calculations
     ),

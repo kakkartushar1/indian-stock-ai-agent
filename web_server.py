@@ -22,7 +22,8 @@ from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 
 from agents.pipeline_orchestrator import run_full_analysis_with_pdf
-from config import OPENAI_API_KEY, PDF_OUTPUT_DIR, EXA_MCP_HTTP_URL
+from config import PDF_OUTPUT_DIR, EXA_MCP_HTTP_URL
+from llm_provider import get_configuration_error, get_provider_status, is_llm_configured
 from main import extract_stock_symbol
 
 
@@ -168,9 +169,8 @@ def prompt_examples() -> list[str]:
     ]
 
 
-def is_openai_key_set() -> bool:
-    key = (OPENAI_API_KEY or os.getenv("OPENAI_API_KEY", "")).strip()
-    return bool(key)
+def llm_configuration_error() -> str:
+    return get_configuration_error() or "LLM provider is not configured."
 
 
 class StockChatHandler(BaseHTTPRequestHandler):
@@ -378,10 +378,10 @@ class StockChatHandler(BaseHTTPRequestHandler):
         if not user:
             return
 
-        if not is_openai_key_set():
+        if not is_llm_configured():
             self._send_json(
                 {
-                    "error": "OPENAI_API_KEY is not configured. Set it in environment or .env and restart the server.",
+                    "error": f"{llm_configuration_error()} Set the required provider variables in .env and restart the server.",
                 },
                 status=HTTPStatus.SERVICE_UNAVAILABLE,
             )
@@ -461,7 +461,7 @@ class StockChatHandler(BaseHTTPRequestHandler):
                 status = HTTPStatus.BAD_GATEWAY
                 message = (
                     "Model access denied for current MODEL_NAME. "
-                    "Set a model your project can access (for example in .env: MODEL_NAME=gpt-4o-mini) "
+                    "Set a model your selected LLM_PROVIDER can access "
                     "and restart the server."
                 )
             elif "0/10 agents succeeded" in message:
@@ -595,7 +595,7 @@ class StockChatHandler(BaseHTTPRequestHandler):
             if "model_not_found" in message or "does not have access to model" in message:
                 message = (
                     "Model access denied for current MODEL_NAME. "
-                    "Set a model your project can access and restart the server."
+                    "Set a model your selected LLM_PROVIDER can access and restart the server."
                 )
             self._set_job_status(job_id, "failed", error=message)
 
@@ -604,9 +604,9 @@ class StockChatHandler(BaseHTTPRequestHandler):
         if not user:
             return
 
-        if not is_openai_key_set():
+        if not is_llm_configured():
             self._send_json(
-                {"error": "OPENAI_API_KEY is not configured. Set it in environment or .env and restart the server."},
+                {"error": f"{llm_configuration_error()} Set the required provider variables in .env and restart the server."},
                 status=HTTPStatus.SERVICE_UNAVAILABLE,
             )
             return
@@ -864,7 +864,8 @@ class StockChatHandler(BaseHTTPRequestHandler):
                     "status": "ok",
                     "db_path": str(DB_PATH),
                     "reports_dir": str(REPORTS_DIR),
-                    "openai_key_set": is_openai_key_set(),
+                    "llm": get_provider_status(),
+                    "llm_configured": is_llm_configured(),
                     "exa_mcp_configured": bool(EXA_MCP_HTTP_URL),
                     "exa_mcp_url": EXA_MCP_HTTP_URL,
                 }

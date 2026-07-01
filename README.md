@@ -116,15 +116,77 @@ Stock Agent/
    pip install -r requirements.txt
    ```
 
-4. **Set up your OpenAI API key**:
+4. **Set up your LLM provider**:
    ```bash
-   # Option 1: Environment variable
+   # Option 1: OpenAI
+   export LLM_PROVIDER=openai
    export OPENAI_API_KEY=your-api-key-here
 
-   # Option 2: Create .env file
+   # Option 2: Create .env file and choose another provider
    cp .env.example .env
-   # Edit .env and add your API key
+   # Edit .env, then set LLM_PROVIDER plus the matching provider key.
    ```
+
+### BYOLLM Provider Configuration
+
+The agent supports OpenAI-compatible providers through `LLM_PROVIDER`:
+
+| Provider | Required settings | Example model |
+|----------|-------------------|---------------|
+| `openai` | `OPENAI_API_KEY` | `gpt-4o-mini` |
+| `groq` | `GROQ_API_KEY` | `llama-3.3-70b-versatile` |
+| `openrouter` | `OPENROUTER_API_KEY` | `openai/gpt-4o-mini` |
+| `mistral` | `MISTRAL_API_KEY_PRIMARY` (or `MISTRAL_API_KEY`) | `mistral-large-latest` |
+| `ollama` | `OLLAMA_BASE_URL` | `llama3.1` |
+| `custom` | `LLM_BASE_URL`, `LLM_API_KEY`, `MODEL_NAME` | provider-specific |
+
+Use `python test_api.py --model <model-name>` to verify the selected provider before running a full stock-analysis pipeline. For local Ollama, start Ollama first and keep `OLLAMA_BASE_URL=http://localhost:11434/v1/`.
+
+### Mistral API Key Configuration & Rate-Limit Fallback
+
+The Mistral provider supports up to **three API keys** to work around free-tier rate limits (HTTP 429 errors).
+
+#### Why multiple keys?
+Mistral's free tier has strict per-minute request limits. When a key is exhausted, the API returns HTTP 429. The fallback chain lets the agent automatically switch to a fresh key and continue without interruption.
+
+#### How the fallback chain works
+
+```
+Request → MISTRAL_API_KEY_PRIMARY
+              │
+              ├─ Success → done
+              └─ HTTP 429 → try MISTRAL_API_KEY_SECONDARY
+                                │
+                                ├─ Success → done
+                                └─ HTTP 429 → try MISTRAL_API_KEY_TERTIARY
+                                                  │
+                                                  ├─ Success → done
+                                                  └─ HTTP 429 → raise error
+```
+
+**Key behaviours:**
+- Fallback is triggered **only** on HTTP 429 (rate-limit) responses. Any other error (auth failure, network error, etc.) is raised immediately without trying the next key.
+- Each key is attempted **at most once** per request — no infinite loops.
+- Only the key *slot name* (`primary`, `secondary`, or `tertiary`) is written to logs. The actual key value is **never** logged.
+
+#### Setup
+
+Set the keys in your `.env` file (copy from `.env.example`):
+
+```bash
+# Required when LLM_PROVIDER=mistral
+MISTRAL_API_KEY_PRIMARY=your_primary_mistral_api_key_here
+
+# Optional — used only if PRIMARY hits a 429 rate-limit
+MISTRAL_API_KEY_SECONDARY=your_secondary_mistral_api_key_here
+
+# Optional — used only if SECONDARY also hits a 429 rate-limit
+MISTRAL_API_KEY_TERTIARY=your_tertiary_mistral_api_key_here
+```
+
+> **Note:** `MISTRAL_API_KEY` (without suffix) is kept for backwards compatibility and acts as an alias for `MISTRAL_API_KEY_PRIMARY` if the primary key is not set separately.
+
+You can obtain free Mistral API keys at <https://console.mistral.ai/>. Create multiple accounts or use the same account's key rotation feature to get additional keys.
 
 ## Usage
 
@@ -265,7 +327,7 @@ Add `.BO` suffix (e.g., `RELIANCE.BO`, `TCS.BO`)
 - **Stock Data**: Yahoo Finance via yfinance library (free, no API key needed)
 - **News**: Google News RSS + Yahoo Finance news
 - **Macro Data**: Simulated RBI/government data (extend for real APIs)
-- **LLM**: OpenAI GPT-4o (requires API key)
+- **LLM**: BYOLLM via OpenAI-compatible providers (`openai`, `groq`, `openrouter`, `mistral`, `ollama`, or `custom`)
 
 ## ⚠️ Data Limitations & Accuracy
 

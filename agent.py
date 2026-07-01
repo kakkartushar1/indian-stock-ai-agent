@@ -43,7 +43,8 @@ from tools.sentiment_analyzer import (
 )
 from pdf_generator import create_stock_report
 
-from config import MODEL_NAME, AGENT_TEMPERATURE, MAX_TURNS
+from config import AGENT_TEMPERATURE, MAX_TURNS
+from llm_provider import get_agent_model
 
 
 # ============================================================================
@@ -135,7 +136,7 @@ Remember: Indian stock symbols need .NS suffix for NSE or .BO for BSE. The tools
 stock_analyst_agent = Agent(
     name="Indian Stock Analyst",
     instructions=LEGACY_STOCK_ANALYST_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=AGENT_TEMPERATURE,
     ),

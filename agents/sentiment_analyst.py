@@ -9,7 +9,8 @@ from openai_sdk import Agent, ModelSettings
 from tools.news_fetcher import get_stock_news, get_market_news
 from tools.sentiment_analyzer import analyze_news_sentiment, get_sentiment_score
 
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 SENTIMENT_ANALYST_INSTRUCTIONS = """
@@ -97,7 +98,7 @@ so they can continue with other analysts and generate the final report.
 sentiment_analyst_agent = Agent(
     name="Sentiment Analyst",
     instructions=SENTIMENT_ANALYST_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=AGENT_TEMPERATURE,
     ),

@@ -14,7 +14,8 @@ from tools.portfolio_analyzer import (
     analyze_portfolio_risk,
 )
 
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 PORTFOLIO_ANALYST_INSTRUCTIONS = """
@@ -142,7 +143,7 @@ so they can complete the overall analysis and generate the final report.
 portfolio_analyst_agent = Agent(
     name="Portfolio Analyst",
     instructions=PORTFOLIO_ANALYST_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=AGENT_TEMPERATURE,
     ),

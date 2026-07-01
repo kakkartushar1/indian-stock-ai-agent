@@ -66,6 +66,7 @@ logs/
 .ipynb_checkpoints/
 
 # Testing
+.cache/
 .pytest_cache/
 .coverage
 htmlcov/

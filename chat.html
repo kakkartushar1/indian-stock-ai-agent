@@ -888,7 +888,7 @@
       user: null,
       isAdmin: false,
       typingNode: null,
-      openaiKeySet: true,
+      llmConfigured: true,
       exaConfigured: false,
       activeJobId: null,
       pollTimer: null,
@@ -1321,17 +1321,18 @@
     async function refreshSystemHealth() {
       try {
         const health = await api("/health");
-        state.openaiKeySet = !!health.openai_key_set;
+        state.llmConfigured = !!health.llm_configured;
         state.exaConfigured = !!health.exa_mcp_configured;
         builderHealth.textContent = state.exaConfigured ? "Exa live research connected" : "Exa not configured";
-        if (!state.openaiKeySet) {
-          setSystemWarning("OPENAI_API_KEY is missing on the server. Set it in .env or environment and restart web_server.py.", true);
+        if (!state.llmConfigured) {
+          const llmError = health.llm && health.llm.error ? health.llm.error : "LLM provider is not configured";
+          setSystemWarning(`${llmError}. Set provider variables in .env and restart web_server.py.`, true);
         } else {
           setSystemWarning(state.exaConfigured ? "" : "Exa MCP is not configured. Reports still run, but live research depth is reduced.");
         }
         updateQualityUi();
       } catch {
-        state.openaiKeySet = false;
+        state.llmConfigured = false;
         state.exaConfigured = false;
         builderHealth.textContent = "Health check failed";
         setSystemWarning("Unable to verify server health. Please refresh or restart the server.", true);
@@ -1391,8 +1392,8 @@
 
     chatForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      if (!state.openaiKeySet) {
-        addMessage("bot", "Cannot run analysis: OPENAI_API_KEY is not configured on the server.");
+      if (!state.llmConfigured) {
+        addMessage("bot", "Cannot run analysis: the selected LLM provider is not configured on the server.");
         return;
       }
       const text = chatInput.value.trim();

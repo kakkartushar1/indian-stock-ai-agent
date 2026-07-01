@@ -5,7 +5,8 @@ This agent specifically argues AGAINST buying a stock or FOR selling.
 """
 
 from openai_sdk import Agent, ModelSettings
-from config import MODEL_NAME, AGENT_TEMPERATURE
+from config import AGENT_TEMPERATURE
+from llm_provider import get_agent_model
 
 
 BEAR_AGENT_INSTRUCTIONS = """
@@ -130,7 +131,7 @@ so they can continue with the Debate Judge and other phases.
 bear_agent = Agent(
     name="Bear Advocate",
     instructions=BEAR_AGENT_INSTRUCTIONS,
-    model=MODEL_NAME,
+    model=get_agent_model(),
     model_settings=ModelSettings(
         temperature=0.5,  # Slightly higher for creative bear arguments
     ),
