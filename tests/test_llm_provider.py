@@ -290,9 +290,13 @@ class MistralFallbackTests(unittest.TestCase):
         self.assertEqual(fn.call_count, 3)
 
     def test_non_429_error_does_not_rotate(self):
-        """Primary returns a non-429 error; raises immediately without trying secondary."""
+        """Primary returns a non-429 error; raises immediately without trying secondary.
+
+        The error is now re-raised as RuntimeError with '[Key: PRIMARY]' context embedded
+        in the message so it surfaces in user-facing output.
+        """
         fn = self._make_fn([_AuthError("invalid api key")])
-        with self.assertRaises(_AuthError):
+        with self.assertRaises(RuntimeError) as ctx:
             _call_mistral_with_fallback(
                 fn,
                 api_keys=["key-primary", "key-secondary", "key-tertiary"],
@@ -300,17 +304,25 @@ class MistralFallbackTests(unittest.TestCase):
             )
         # Only the primary key was attempted.
         fn.assert_called_once_with("key-primary")
+        # The error message must include the key slot name.
+        self.assertIn("[Key: PRIMARY]", str(ctx.exception))
 
     def test_server_error_does_not_rotate(self):
-        """A 500 server error on primary does NOT trigger key rotation."""
+        """A 500 server error on primary does NOT trigger key rotation.
+
+        The error is now re-raised as RuntimeError with '[Key: PRIMARY]' context embedded
+        in the message so it surfaces in user-facing output.
+        """
         fn = self._make_fn([_ServerError("internal server error")])
-        with self.assertRaises(_ServerError):
+        with self.assertRaises(RuntimeError) as ctx:
             _call_mistral_with_fallback(
                 fn,
                 api_keys=["key-primary", "key-secondary", "key-tertiary"],
                 key_labels=["primary", "secondary", "tertiary"],
             )
         fn.assert_called_once_with("key-primary")
+        # The error message must include the key slot name.
+        self.assertIn("[Key: PRIMARY]", str(ctx.exception))
 
     def test_empty_key_list_raises_immediately(self):
         """Empty key list raises LLMConfigurationError immediately."""
@@ -390,7 +402,8 @@ class MistralFallbackTests(unittest.TestCase):
         self.assertIn("Rotating to TERTIARY key", output)
 
     def test_all_keys_exhausted_logged(self):
-        """When all keys are exhausted, the exhaustion message is printed."""
+        """When all keys are exhausted, the exhaustion message is printed and the
+        raised LLMConfigurationError includes the key chain in its message."""
         fn = self._make_fn(
             [
                 _RateLimitError("rate limited"),
@@ -399,14 +412,16 @@ class MistralFallbackTests(unittest.TestCase):
             ]
         )
         with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
-            with self.assertRaises(LLMConfigurationError):
+            with self.assertRaises(LLMConfigurationError) as ctx:
                 _call_mistral_with_fallback(
                     fn,
                     api_keys=["key-primary", "key-secondary", "key-tertiary"],
                     key_labels=["primary", "secondary", "tertiary"],
                 )
             output = mock_stdout.getvalue()
-        self.assertIn("All API keys exhausted", output)
+        self.assertIn("All API keys hit 429 rate limit", output)
+        # The raised exception must include the key chain for user-facing output.
+        self.assertIn("[All keys exhausted: PRIMARY", str(ctx.exception))
 
     def test_no_api_key_values_in_logs(self):
         """Actual API key values must NEVER appear in the printed output."""

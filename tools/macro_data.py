@@ -211,7 +211,6 @@ def get_sector_performance() -> str:
             "NIFTY_ENERGY": "^CNXENERGY",
             "NIFTY_INFRA": "^CNXINFRA",
             "NIFTY_PSU_BANK": "^CNXPSUBANK",
-            "NIFTY_PRIVATE_BANK": "^NIFTYPVTBANK",
         }
 
         sector_data = []

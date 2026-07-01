@@ -80,6 +80,8 @@ try:
     ModelSettings = _sdk.ModelSettings
     AsyncOpenAI = _sdk.AsyncOpenAI
     OpenAIChatCompletionsModel = _sdk.OpenAIChatCompletionsModel
+    # Export the Model base class so llm_provider.py can inherit from it
+    Model = getattr(_sdk, 'Model', None)
     _sdk_function_tool = getattr(_sdk, 'function_tool', lambda x: x)
     _sdk_set_tracing_disabled = getattr(_sdk, 'set_tracing_disabled', lambda disabled: None)
     handoff = getattr(_sdk, 'handoff', None)
@@ -197,6 +199,14 @@ if SDK_AVAILABLE:
 
 # Fallback stubs if SDK not available
 if not SDK_AVAILABLE:
+    class Model:
+        """Fallback Model stub (mirrors the SDK Model ABC interface)."""
+        async def get_response(self, *args, **kwargs):
+            raise NotImplementedError(f"OpenAI Agents SDK not available: {_import_error}")
+
+        async def stream_response(self, *args, **kwargs):
+            raise NotImplementedError(f"OpenAI Agents SDK not available: {_import_error}")
+
     class Agent:
         """Fallback Agent stub."""
         def __init__(self, name, instructions, model=None, model_settings=None,
@@ -232,8 +242,8 @@ if not SDK_AVAILABLE:
         def __init__(self, *args, **kwargs):
             raise NotImplementedError(f"OpenAI Agents SDK not available: {_import_error}")
 
-    class OpenAIChatCompletionsModel:
-        """Fallback OpenAIChatCompletionsModel stub."""
+    class OpenAIChatCompletionsModel(Model):
+        """Fallback OpenAIChatCompletionsModel stub (inherits from Model stub)."""
         def __init__(self, *args, **kwargs):
             raise NotImplementedError(f"OpenAI Agents SDK not available: {_import_error}")
 

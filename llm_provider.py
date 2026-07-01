@@ -25,6 +25,14 @@ from openai_sdk import (
     set_tracing_disabled,
 )
 
+# Import the SDK Model base class for proper inheritance.
+# The OpenAI Agents SDK Agent() constructor validates that model is a string,
+# a Model instance, or None. _MistralFallbackModel must inherit from Model.
+try:
+    from openai_sdk import Model as _SdkModel  # type: ignore[attr-defined]
+except ImportError:
+    _SdkModel = None  # type: ignore[assignment,misc]
+
 load_dotenv()
 
 
@@ -91,13 +99,17 @@ def _call_mistral_with_fallback(
 
     Raises:
         The last 429 error if all keys are exhausted, or any non-429 error immediately.
+        Error messages always include the active key slot name (e.g. [Key: PRIMARY])
+        so the caller can surface it in user-facing output without exposing key values.
     """
     if not api_keys:
         raise LLMConfigurationError("No Mistral API keys configured.")
 
     last_error: Exception | None = None
+    tried_labels: list[str] = []
     for idx, (key, label) in enumerate(zip(api_keys, key_labels)):
         upper_label = label.upper()
+        tried_labels.append(upper_label)
         print(f"[Mistral] Attempting request with {upper_label} key", flush=True)
         logger.info("[Mistral] Attempting request with %s key", upper_label)
         try:
@@ -145,16 +157,27 @@ def _call_mistral_with_fallback(
                 upper_label,
                 type(exc).__name__,
             )
-            raise
+            # Re-raise with key slot context embedded in the message so callers
+            # can surface it in user-facing output (e.g. '[Key: PRIMARY] - ...').
+            key_context = f"[Key: {upper_label}]"
+            raise RuntimeError(
+                f"{key_context} {type(exc).__name__}: {exc}"
+            ) from exc
 
-    # All keys exhausted with 429 errors.
+    # All keys exhausted with 429 errors — build a descriptive chain string.
+    key_chain = "\u2192".join(tried_labels)  # e.g. PRIMARY→SECONDARY→TERTIARY
+    exhausted_context = f"[All keys exhausted: {key_chain}]"
     print(
-        "[Mistral] All API keys exhausted due to rate limiting (429). "
+        f"[Mistral] {exhausted_context} All API keys hit 429 rate limit. "
         "Please wait before retrying or add more API keys.",
         flush=True,
     )
+    logger.warning(
+        "[Mistral] %s All API keys hit 429 rate limit.",
+        exhausted_context,
+    )
     raise LLMConfigurationError(
-        "All Mistral API keys exhausted due to rate limiting (429). "
+        f"{exhausted_context} All Mistral API keys exhausted due to rate limiting (429). "
         "Please wait before retrying or add more API keys."
     ) from last_error
 
@@ -273,9 +296,205 @@ def load_llm_config() -> LLMProviderConfig:
     )
 
 
+def _make_openai_client(
+    api_key: str,
+    base_url: str | None,
+    default_headers: dict[str, str] | None,
+    verify_ssl: bool,
+) -> Any:
+    """Create a single AsyncOpenAI client for the given api_key."""
+    http_client = httpx.AsyncClient(verify=verify_ssl)
+    return AsyncOpenAI(
+        api_key=api_key,
+        base_url=base_url,
+        default_headers=default_headers or None,
+        http_client=http_client,
+    )
+
+
+def _get_mistral_fallback_base() -> type:
+    """Return the correct base class for _MistralFallbackModel.
+
+    When the OpenAI Agents SDK is available its ``Agent`` constructor validates
+    that the ``model`` argument is a string, a ``Model`` instance, or ``None``.
+    To satisfy that check we inherit from ``OpenAIChatCompletionsModel`` which
+    itself inherits from the SDK's ``Model`` ABC.
+
+    If the SDK is not available (e.g. during unit tests with stubs) we fall
+    back to ``object`` so the class can still be instantiated without error.
+    """
+    # OpenAIChatCompletionsModel already inherits from the SDK Model ABC,
+    # so inheriting from it satisfies isinstance(model, Model).
+    if OpenAIChatCompletionsModel is not None:
+        return OpenAIChatCompletionsModel
+    if _SdkModel is not None:
+        return _SdkModel
+    return object
+
+
+class _MistralFallbackModel(_get_mistral_fallback_base()):  # type: ignore[misc]
+    """Thin wrapper around OpenAIChatCompletionsModel that rotates Mistral API keys on 429.
+
+    The OpenAI Agents SDK calls ``get_response`` / ``stream_response`` on the model
+    object.  This wrapper intercepts those calls, tries each key in order, and embeds
+    the active key slot name in any error message so it surfaces in user-facing output.
+
+    Inherits from ``OpenAIChatCompletionsModel`` (which itself inherits from the SDK
+    ``Model`` ABC) so that ``isinstance(model, Model)`` is True and the SDK's
+    ``Agent`` constructor accepts it without raising a ``TypeError``.
+    """
+
+    def __init__(
+        self,
+        model_name: str,
+        api_keys: list[str],
+        key_labels: list[str],
+        base_url: str | None,
+        default_headers: dict[str, str] | None,
+        verify_ssl: bool,
+    ) -> None:
+        if not api_keys:
+            raise LLMConfigurationError("No Mistral API keys configured.")
+        self._model_name = model_name
+        self._api_keys = api_keys
+        self._key_labels = [lbl.upper() for lbl in key_labels]
+        self._base_url = base_url
+        self._default_headers = default_headers
+        self._verify_ssl = verify_ssl
+        # Pre-build one AsyncOpenAI client per key slot so we can swap
+        # self._client on 429 without re-creating clients on every request.
+        self._key_clients: list[Any] = [
+            _make_openai_client(
+                api_key=key,
+                base_url=base_url,
+                default_headers=default_headers,
+                verify_ssl=verify_ssl,
+            )
+            for key in api_keys
+        ]
+        # Call super().__init__() with the PRIMARY key's client so that
+        # self._client (required by OpenAIChatCompletionsModel) is properly
+        # initialised and isinstance(model, Model) is satisfied by the SDK.
+        super().__init__(model=model_name, openai_client=self._key_clients[0])
+
+    # ------------------------------------------------------------------
+    # Core fallback logic (async)
+    # ------------------------------------------------------------------
+
+    async def _call_with_fallback(self, method_name: str, *args: Any, **kwargs: Any) -> Any:
+        """Try each key in order; rotate only on 429; embed key slot in error messages.
+
+        On each attempt ``self._client`` is swapped to the appropriate key's
+        AsyncOpenAI client so that the parent-class method uses the correct
+        credentials without needing a separate per-key model wrapper.
+        """
+        last_error: Exception | None = None
+        tried_labels: list[str] = []
+
+        for idx, (client, label) in enumerate(zip(self._key_clients, self._key_labels)):
+            tried_labels.append(label)
+            print(f"[Mistral] Attempting request with {label} key", flush=True)
+            logger.info("[Mistral] Attempting request with %s key", label)
+            try:
+                # Swap self._client to the current key's client before delegating
+                # to the parent class method so it uses the correct credentials.
+                self._client = client
+                result = await getattr(super(_MistralFallbackModel, self), method_name)(*args, **kwargs)
+                print(f"[Mistral] {label} key succeeded", flush=True)
+                logger.info("[Mistral] %s key succeeded", label)
+                return result
+            except Exception as exc:  # noqa: BLE001
+                if _is_rate_limit_error(exc):
+                    next_labels = self._key_labels[idx + 1 :]
+                    if next_labels:
+                        next_label = next_labels[0]
+                        print(
+                            f"[Mistral] {label} key hit 429 rate limit. "
+                            f"Rotating to {next_label} key...",
+                            flush=True,
+                        )
+                        logger.warning(
+                            "[Mistral] %s key hit 429 rate limit. Rotating to %s key.",
+                            label,
+                            next_label,
+                        )
+                    else:
+                        print(
+                            f"[Mistral] {label} key hit 429 rate limit. No more keys to try.",
+                            flush=True,
+                        )
+                        logger.warning(
+                            "[Mistral] %s key hit 429 rate limit. No more keys to try.", label
+                        )
+                    last_error = exc
+                    continue
+
+                # Non-429 error: propagate immediately with key slot context.
+                print(
+                    f"[Mistral] {label} key raised a non-429 error ({type(exc).__name__}); "
+                    "not rotating.",
+                    flush=True,
+                )
+                logger.error(
+                    "[Mistral] %s key raised non-429 error (%s); propagating immediately.",
+                    label,
+                    type(exc).__name__,
+                )
+                key_context = f"[Key: {label}]"
+                raise RuntimeError(f"{key_context} {type(exc).__name__}: {exc}") from exc
+
+        # All keys exhausted.
+        key_chain = "→".join(tried_labels)
+        exhausted_context = f"[All keys exhausted: {key_chain}]"
+        print(
+            f"[Mistral] {exhausted_context} All API keys hit 429 rate limit. "
+            "Please wait before retrying or add more API keys.",
+            flush=True,
+        )
+        logger.warning("[Mistral] %s All API keys hit 429 rate limit.", exhausted_context)
+        raise LLMConfigurationError(
+            f"{exhausted_context} All Mistral API keys exhausted due to rate limiting (429). "
+            "Please wait before retrying or add more API keys."
+        ) from last_error
+
+    # ------------------------------------------------------------------
+    # SDK model interface
+    # ------------------------------------------------------------------
+
+    async def get_response(self, *args: Any, **kwargs: Any) -> Any:
+        """Intercept get_response and apply key-rotation fallback."""
+        return await self._call_with_fallback("get_response", *args, **kwargs)
+
+    async def stream_response(self, *args: Any, **kwargs: Any) -> Any:
+        """Intercept stream_response and apply key-rotation fallback."""
+        return await self._call_with_fallback("stream_response", *args, **kwargs)
+
+
 def _build_compatible_model(config: LLMProviderConfig) -> Any:
     if config.disable_tracing:
         set_tracing_disabled(True)
+
+    if config.provider == "mistral":
+        # Build the ordered list of fallback keys.
+        _candidate_pairs = [
+            (_env("MISTRAL_API_KEY_PRIMARY"), "PRIMARY"),
+            (_env("MISTRAL_API_KEY_SECONDARY"), "SECONDARY"),
+            (_env("MISTRAL_API_KEY_TERTIARY"), "TERTIARY"),
+        ]
+        _named_pairs = [(k, lbl) for k, lbl in _candidate_pairs if k]
+        if len(_named_pairs) > 1:
+            # Multiple keys available: use the fallback-aware model wrapper.
+            api_keys = [k for k, _ in _named_pairs]
+            key_labels = [lbl for _, lbl in _named_pairs]
+            return _MistralFallbackModel(
+                model_name=config.model_name,
+                api_keys=api_keys,
+                key_labels=key_labels,
+                base_url=config.base_url,
+                default_headers=config.default_headers or None,
+                verify_ssl=config.verify_ssl,
+            )
+        # Single key (or legacy MISTRAL_API_KEY): fall through to standard model.
 
     http_client = httpx.AsyncClient(verify=config.verify_ssl)
     client = AsyncOpenAI(

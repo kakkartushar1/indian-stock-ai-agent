@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "lastUpdated": "2026-07-01T08:25:03.644Z",
+  "lastUpdated": "2026-07-01T09:16:18.730Z",
   "user_memory": [],
   "slingshot_memory": [
     {
@@ -29,6 +29,34 @@
       "content": "Indian stock AI agent: _call_mistral_with_fallback uses print() with flush=True AND logger for key slot logging; format: '[Mistral] Attempting request with PRIMARY key'.",
       "createdAt": "2026-07-01T08:25:03.644Z",
       "updatedAt": "2026-07-01T08:25:03.644Z",
+      "isEnabled": true
+    },
+    {
+      "id": "mem_1782895771004_uhkmx7",
+      "content": "Indian stock AI agent: _MistralFallbackModel class in llm_provider.py wraps OpenAIChatCompletionsModel and intercepts get_response/stream_response to rotate keys on 429 at actual request time.",
+      "createdAt": "2026-07-01T08:49:31.004Z",
+      "updatedAt": "2026-07-01T08:49:31.004Z",
+      "isEnabled": true
+    },
+    {
+      "id": "mem_1782895771017_e7bwt4",
+      "content": "Indian stock AI agent: Non-429 errors from Mistral are re-raised as RuntimeError('[Key: LABEL] ExcType: msg') and all-keys-exhausted raises LLMConfigurationError('[All keys exhausted: P→S→T] ...').",
+      "createdAt": "2026-07-01T08:49:31.016Z",
+      "updatedAt": "2026-07-01T08:49:31.016Z",
+      "isEnabled": true
+    },
+    {
+      "id": "mem_1782897378712_cdf1xi",
+      "content": "Indian stock AI agent: _MistralFallbackModel in llm_provider.py inherits from OpenAIChatCompletionsModel (via _get_mistral_fallback_base()) to satisfy SDK Agent() isinstance(model, Model) check.",
+      "createdAt": "2026-07-01T09:16:18.712Z",
+      "updatedAt": "2026-07-01T09:16:18.712Z",
+      "isEnabled": true
+    },
+    {
+      "id": "mem_1782897378729_68dazg",
+      "content": "Indian stock AI agent: openai_sdk.py exports Model = getattr(_sdk, 'Model', None) and fallback stub Model class so llm_provider.py can import it for type checking.",
+      "createdAt": "2026-07-01T09:16:18.729Z",
+      "updatedAt": "2026-07-01T09:16:18.729Z",
       "isEnabled": true
     }
   ]
