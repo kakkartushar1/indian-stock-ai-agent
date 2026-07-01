@@ -1,0 +1,770 @@
+{
+  "llm_provider.py": {
+    "filename": "llm_provider.py",
+    "path": "llm_provider.py",
+    "version": "1.2",
+    "contextFile": null,
+    "chunks": {
+      "191c85": {
+        "user": "Tushar Kakkar",
+        "model": "gpt-4.1",
+        "timestamp": 1782894196,
+        "platform": "VisualStudioCode",
+        "product": "AIPP",
+        "productVersion": "2.6.1",
+        "source": "agent",
+        "type": "agentEditTool",
+        "extraContext": {
+          "promptMessage": "562a786d",
+          "files": "a8451636"
+        },
+        "hash": "5c6894f4",
+        "messageId": "system_8c5c1240-7525-11f1-9d49-07f913f4d056",
+        "codeBlockId": null,
+        "isActive": true,
+        "hoverData": "\n### Slingshot Generated Code\n\n- **user**: Tushar Kakkar\n- **model**: gpt-4.1\n- **timestamp**: 7/1/2026, 1:53:16 PM\n- **source**: agent\n- **type**: agentEditTool\n"
+      },
+      "78ac59": {
+        "user": "Tushar Kakkar",
+        "model": "gpt-4.1",
+        "timestamp": 1782894196,
+        "platform": "VisualStudioCode",
+        "product": "AIPP",
+        "productVersion": "2.6.1",
+        "source": "agent",
+        "type": "agentEditTool",
+        "extraContext": {
+          "promptMessage": "562a786d",
+          "files": "a8451636"
+        },
+        "hash": "d453e5ed",
+        "messageId": "system_8c5c1240-7525-11f1-9d49-07f913f4d056",
+        "codeBlockId": null,
+        "isActive": true,
+        "hoverData": "\n### Slingshot Generated Code\n\n- **user**: Tushar Kakkar\n- **model**: gpt-4.1\n- **timestamp**: 7/1/2026, 1:53:16 PM\n- **source**: agent\n- **type**: agentEditTool\n"
+      }
+    },
+    "lines": {
+      "75": {
+        "chunkId": "78ac59",
+        "hash": "e881dc73",
+        "encoded": "def%20_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "76": {
+        "chunkId": "78ac59",
+        "hash": "993be396",
+        "encoded": "make_request_fn:%20Callable%5B%5Bstr%5D,%20Any%5D,",
+        "prevChunkIds": []
+      },
+      "77": {
+        "chunkId": "78ac59",
+        "hash": "9dba3edd",
+        "encoded": "api_keys:%20list%5Bstr%5D,",
+        "prevChunkIds": []
+      },
+      "78": {
+        "chunkId": "78ac59",
+        "hash": "b6197c60",
+        "encoded": "key_labels:%20list%5Bstr%5D,",
+        "prevChunkIds": []
+      },
+      "79": {
+        "chunkId": "78ac59",
+        "hash": "b23687f4",
+        "encoded": ")%20-%3E%20Any:",
+        "prevChunkIds": []
+      },
+      "80": {
+        "chunkId": "78ac59",
+        "hash": "3d77b298",
+        "encoded": "%22%22%22Try%20each%20Mistral%20API%20key%20in%20order,%20falling%20back%20only%20on%20HTTP%20429%20rate-limit%20errors.",
+        "prevChunkIds": []
+      },
+      "82": {
+        "chunkId": "78ac59",
+        "hash": "bf3f0228",
+        "encoded": "Args:",
+        "prevChunkIds": []
+      },
+      "83": {
+        "chunkId": "78ac59",
+        "hash": "b36c1ef4",
+        "encoded": "make_request_fn:%20A%20callable%20that%20accepts%20an%20api_key%20string%20and%20performs%20the",
+        "prevChunkIds": []
+      },
+      "84": {
+        "chunkId": "78ac59",
+        "hash": "646f9791",
+        "encoded": "Mistral%20API%20call,%20returning%20the%20result%20on%20success%20or%20raising%20on%20failure.",
+        "prevChunkIds": []
+      },
+      "85": {
+        "chunkId": "78ac59",
+        "hash": "6d4f73e5",
+        "encoded": "api_keys:%20Ordered%20list%20of%20API%20keys%20to%20try%20(primary%20%E2%86%92%20secondary%20%E2%86%92%20tertiary).",
+        "prevChunkIds": []
+      },
+      "86": {
+        "chunkId": "78ac59",
+        "hash": "5d6964ff",
+        "encoded": "key_labels:%20Human-readable%20labels%20for%20each%20key%20slot%20(never%20the%20actual%20key%20values).",
+        "prevChunkIds": []
+      },
+      "88": {
+        "chunkId": "78ac59",
+        "hash": "3514339a",
+        "encoded": "Returns:",
+        "prevChunkIds": []
+      },
+      "89": {
+        "chunkId": "78ac59",
+        "hash": "7948c96d",
+        "encoded": "The%20result%20from%20the%20first%20successful%20call.",
+        "prevChunkIds": []
+      },
+      "91": {
+        "chunkId": "78ac59",
+        "hash": "75f63071",
+        "encoded": "Raises:",
+        "prevChunkIds": []
+      },
+      "92": {
+        "chunkId": "78ac59",
+        "hash": "270f0ef3",
+        "encoded": "The%20last%20429%20error%20if%20all%20keys%20are%20exhausted,%20or%20any%20non-429%20error%20immediately.",
+        "prevChunkIds": []
+      },
+      "93": {
+        "chunkId": "78ac59",
+        "hash": "c1b52731",
+        "encoded": "%22%22%22",
+        "prevChunkIds": []
+      },
+      "94": {
+        "chunkId": "78ac59",
+        "hash": "ee154e68",
+        "encoded": "if%20not%20api_keys:",
+        "prevChunkIds": []
+      },
+      "95": {
+        "chunkId": "78ac59",
+        "hash": "45b416e5",
+        "encoded": "raise%20LLMConfigurationError(%22No%20Mistral%20API%20keys%20configured.%22)",
+        "prevChunkIds": []
+      },
+      "97": {
+        "chunkId": "78ac59",
+        "hash": "643781d1",
+        "encoded": "last_error:%20Exception%20%7C%20None%20=%20None",
+        "prevChunkIds": []
+      },
+      "98": {
+        "chunkId": "78ac59",
+        "hash": "2e59f3a9",
+        "encoded": "for%20idx,%20(key,%20label)%20in%20enumerate(zip(api_keys,%20key_labels)):",
+        "prevChunkIds": []
+      },
+      "99": {
+        "chunkId": "78ac59",
+        "hash": "80adf56b",
+        "encoded": "upper_label%20=%20label.upper()",
+        "prevChunkIds": []
+      },
+      "100": {
+        "chunkId": "78ac59",
+        "hash": "b548311f",
+        "encoded": "print(f%22%5BMistral%5D%20Attempting%20request%20with%20%7Bupper_label%7D%20key%22,%20flush=True)",
+        "prevChunkIds": []
+      },
+      "101": {
+        "chunkId": "78ac59",
+        "hash": "eeef1f87",
+        "encoded": "logger.info(%22%5BMistral%5D%20Attempting%20request%20with%20%25s%20key%22,%20upper_label)",
+        "prevChunkIds": []
+      },
+      "102": {
+        "chunkId": "78ac59",
+        "hash": "81a8184a",
+        "encoded": "try:",
+        "prevChunkIds": []
+      },
+      "103": {
+        "chunkId": "78ac59",
+        "hash": "61510acd",
+        "encoded": "result%20=%20make_request_fn(key)",
+        "prevChunkIds": []
+      },
+      "104": {
+        "chunkId": "78ac59",
+        "hash": "63e67f18",
+        "encoded": "print(f%22%5BMistral%5D%20%7Bupper_label%7D%20key%20succeeded%22,%20flush=True)",
+        "prevChunkIds": []
+      },
+      "105": {
+        "chunkId": "78ac59",
+        "hash": "f93e221a",
+        "encoded": "logger.info(%22%5BMistral%5D%20%25s%20key%20succeeded%22,%20upper_label)",
+        "prevChunkIds": []
+      },
+      "106": {
+        "chunkId": "78ac59",
+        "hash": "477d9cfa",
+        "encoded": "return%20result",
+        "prevChunkIds": []
+      },
+      "107": {
+        "chunkId": "78ac59",
+        "hash": "434f84ca",
+        "encoded": "except%20Exception%20as%20exc:%20%20#%20noqa:%20BLE001",
+        "prevChunkIds": []
+      },
+      "108": {
+        "chunkId": "78ac59",
+        "hash": "02d657f3",
+        "encoded": "#%20Only%20rotate%20to%20the%20next%20key%20on%20rate-limit%20(429)%20errors.",
+        "prevChunkIds": []
+      },
+      "109": {
+        "chunkId": "78ac59",
+        "hash": "78a8e6ad",
+        "encoded": "if%20_is_rate_limit_error(exc):",
+        "prevChunkIds": []
+      },
+      "110": {
+        "chunkId": "78ac59",
+        "hash": "fa9e0a92",
+        "encoded": "#%20Determine%20the%20next%20key%20label%20for%20the%20log%20message.",
+        "prevChunkIds": []
+      },
+      "111": {
+        "chunkId": "78ac59",
+        "hash": "d465ca83",
+        "encoded": "next_labels%20=%20key_labels%5Bidx%20+%201%20:%5D",
+        "prevChunkIds": []
+      },
+      "112": {
+        "chunkId": "78ac59",
+        "hash": "a690043c",
+        "encoded": "if%20next_labels:",
+        "prevChunkIds": []
+      },
+      "113": {
+        "chunkId": "78ac59",
+        "hash": "3f25c5d8",
+        "encoded": "next_label%20=%20next_labels%5B0%5D.upper()",
+        "prevChunkIds": []
+      },
+      "114": {
+        "chunkId": "78ac59",
+        "hash": "af69a7ff",
+        "encoded": "print(",
+        "prevChunkIds": []
+      },
+      "115": {
+        "chunkId": "78ac59",
+        "hash": "04545e30",
+        "encoded": "f%22%5BMistral%5D%20%7Bupper_label%7D%20key%20hit%20429%20rate%20limit.%20%22",
+        "prevChunkIds": []
+      },
+      "116": {
+        "chunkId": "78ac59",
+        "hash": "238e6c2e",
+        "encoded": "f%22Rotating%20to%20%7Bnext_label%7D%20key...%22,",
+        "prevChunkIds": []
+      },
+      "117": {
+        "chunkId": "78ac59",
+        "hash": "afd3f8cf",
+        "encoded": "flush=True,",
+        "prevChunkIds": []
+      },
+      "118": {
+        "chunkId": "78ac59",
+        "hash": "7f77050d",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "119": {
+        "chunkId": "78ac59",
+        "hash": "37f6e846",
+        "encoded": "logger.warning(",
+        "prevChunkIds": []
+      },
+      "120": {
+        "chunkId": "78ac59",
+        "hash": "ddfd5ad6",
+        "encoded": "%22%5BMistral%5D%20%25s%20key%20hit%20429%20rate%20limit.%20Rotating%20to%20%25s%20key.%22,",
+        "prevChunkIds": []
+      },
+      "121": {
+        "chunkId": "78ac59",
+        "hash": "c7859903",
+        "encoded": "upper_label,",
+        "prevChunkIds": []
+      },
+      "122": {
+        "chunkId": "78ac59",
+        "hash": "4807b812",
+        "encoded": "next_label,",
+        "prevChunkIds": []
+      },
+      "123": {
+        "chunkId": "78ac59",
+        "hash": "61a411d8",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "124": {
+        "chunkId": "78ac59",
+        "hash": "ca112cb0",
+        "encoded": "else:",
+        "prevChunkIds": []
+      },
+      "125": {
+        "chunkId": "78ac59",
+        "hash": "5a562cc0",
+        "encoded": "print(",
+        "prevChunkIds": []
+      },
+      "126": {
+        "chunkId": "78ac59",
+        "hash": "a556828e",
+        "encoded": "f%22%5BMistral%5D%20%7Bupper_label%7D%20key%20hit%20429%20rate%20limit.%20%22",
+        "prevChunkIds": []
+      },
+      "127": {
+        "chunkId": "78ac59",
+        "hash": "7e3bebf2",
+        "encoded": "%22No%20more%20keys%20to%20try.%22,",
+        "prevChunkIds": []
+      },
+      "128": {
+        "chunkId": "78ac59",
+        "hash": "a8682597",
+        "encoded": "flush=True,",
+        "prevChunkIds": []
+      },
+      "129": {
+        "chunkId": "78ac59",
+        "hash": "73aa7eed",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "130": {
+        "chunkId": "78ac59",
+        "hash": "083a7359",
+        "encoded": "logger.warning(",
+        "prevChunkIds": []
+      },
+      "131": {
+        "chunkId": "78ac59",
+        "hash": "01d2f32d",
+        "encoded": "%22%5BMistral%5D%20%25s%20key%20hit%20429%20rate%20limit.%20No%20more%20keys%20to%20try.%22,",
+        "prevChunkIds": []
+      },
+      "132": {
+        "chunkId": "78ac59",
+        "hash": "e24ba58f",
+        "encoded": "upper_label,",
+        "prevChunkIds": []
+      },
+      "133": {
+        "chunkId": "78ac59",
+        "hash": "3966387c",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "134": {
+        "chunkId": "78ac59",
+        "hash": "9b935dd2",
+        "encoded": "last_error%20=%20exc",
+        "prevChunkIds": []
+      },
+      "135": {
+        "chunkId": "78ac59",
+        "hash": "7103f140",
+        "encoded": "continue",
+        "prevChunkIds": []
+      },
+      "136": {
+        "chunkId": "78ac59",
+        "hash": "ea9aa72e",
+        "encoded": "#%20All%20other%20errors%20(auth,%20validation,%20server%20errors)%20propagate%20immediately.",
+        "prevChunkIds": []
+      },
+      "137": {
+        "chunkId": "78ac59",
+        "hash": "f4a12d97",
+        "encoded": "print(",
+        "prevChunkIds": []
+      },
+      "138": {
+        "chunkId": "78ac59",
+        "hash": "678bc0e4",
+        "encoded": "f%22%5BMistral%5D%20%7Bupper_label%7D%20key%20raised%20a%20non-429%20error%20(%7Btype(exc).__name__%7D);%20%22",
+        "prevChunkIds": []
+      },
+      "139": {
+        "chunkId": "78ac59",
+        "hash": "d641397b",
+        "encoded": "%22not%20rotating.%22,",
+        "prevChunkIds": []
+      },
+      "140": {
+        "chunkId": "78ac59",
+        "hash": "beb3ece0",
+        "encoded": "flush=True,",
+        "prevChunkIds": []
+      },
+      "141": {
+        "chunkId": "78ac59",
+        "hash": "afe3c588",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "142": {
+        "chunkId": "78ac59",
+        "hash": "8f66be72",
+        "encoded": "logger.error(",
+        "prevChunkIds": []
+      },
+      "143": {
+        "chunkId": "78ac59",
+        "hash": "79217978",
+        "encoded": "%22%5BMistral%5D%20%25s%20key%20raised%20non-429%20error%20(%25s);%20propagating%20immediately.%22,",
+        "prevChunkIds": []
+      },
+      "144": {
+        "chunkId": "78ac59",
+        "hash": "0c5e13aa",
+        "encoded": "upper_label,",
+        "prevChunkIds": []
+      },
+      "145": {
+        "chunkId": "78ac59",
+        "hash": "f045bfb5",
+        "encoded": "type(exc).__name__,",
+        "prevChunkIds": []
+      },
+      "146": {
+        "chunkId": "78ac59",
+        "hash": "cfaa7c9d",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "147": {
+        "chunkId": "78ac59",
+        "hash": "ec44794c",
+        "encoded": "raise",
+        "prevChunkIds": []
+      },
+      "149": {
+        "chunkId": "78ac59",
+        "hash": "1611404d",
+        "encoded": "#%20All%20keys%20exhausted%20with%20429%20errors.",
+        "prevChunkIds": []
+      },
+      "150": {
+        "chunkId": "78ac59",
+        "hash": "0b45101a",
+        "encoded": "print(",
+        "prevChunkIds": []
+      },
+      "151": {
+        "chunkId": "78ac59",
+        "hash": "e3f7f4eb",
+        "encoded": "%22%5BMistral%5D%20All%20API%20keys%20exhausted%20due%20to%20rate%20limiting%20(429).%20%22",
+        "prevChunkIds": []
+      },
+      "152": {
+        "chunkId": "78ac59",
+        "hash": "a893bec0",
+        "encoded": "%22Please%20wait%20before%20retrying%20or%20add%20more%20API%20keys.%22,",
+        "prevChunkIds": []
+      },
+      "153": {
+        "chunkId": "78ac59",
+        "hash": "04a61757",
+        "encoded": "flush=True,",
+        "prevChunkIds": []
+      },
+      "154": {
+        "chunkId": "78ac59",
+        "hash": "a8f83cbf",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "155": {
+        "chunkId": "78ac59",
+        "hash": "62d239a1",
+        "encoded": "raise%20LLMConfigurationError(",
+        "prevChunkIds": []
+      },
+      "156": {
+        "chunkId": "78ac59",
+        "hash": "6e4aa947",
+        "encoded": "%22All%20Mistral%20API%20keys%20exhausted%20due%20to%20rate%20limiting%20(429).%20%22",
+        "prevChunkIds": []
+      },
+      "157": {
+        "chunkId": "78ac59",
+        "hash": "368a04fc",
+        "encoded": "%22Please%20wait%20before%20retrying%20or%20add%20more%20API%20keys.%22",
+        "prevChunkIds": []
+      },
+      "158": {
+        "chunkId": "78ac59",
+        "hash": "d4dad18c",
+        "encoded": ")%20from%20last_error",
+        "prevChunkIds": []
+      },
+      "244": {
+        "chunkId": "191c85",
+        "hash": "e7e423c5",
+        "encoded": "def%20_is_rate_limit_error(exc:%20Exception)%20-%3E%20bool:",
+        "prevChunkIds": []
+      },
+      "245": {
+        "chunkId": "191c85",
+        "hash": "85885dec",
+        "encoded": "%22%22%22Return%20True%20if%20*exc*%20represents%20an%20HTTP%20429%20/%20rate-limit%20error.",
+        "prevChunkIds": []
+      },
+      "247": {
+        "chunkId": "191c85",
+        "hash": "fb23c864",
+        "encoded": "Handles%20the%20exact%20Mistral%20error%20format:",
+        "prevChunkIds": []
+      },
+      "248": {
+        "chunkId": "191c85",
+        "hash": "494e6a18",
+        "encoded": "%7B'object':%20'error',%20'message':%20'Rate%20limit%20exceeded',%20'type':%20'rate_limited',",
+        "prevChunkIds": []
+      },
+      "249": {
+        "chunkId": "191c85",
+        "hash": "1755467e",
+        "encoded": "'param':%20None,%20'code':%20'1300',%20'raw_status_code':%20429%7D",
+        "prevChunkIds": []
+      },
+      "250": {
+        "chunkId": "191c85",
+        "hash": "e247c34f",
+        "encoded": "as%20well%20as%20standard%20OpenAI%20SDK%20RateLimitError%20and%20httpx%20status%20codes.",
+        "prevChunkIds": []
+      },
+      "251": {
+        "chunkId": "191c85",
+        "hash": "6f56ab30",
+        "encoded": "%22%22%22",
+        "prevChunkIds": []
+      },
+      "252": {
+        "chunkId": "191c85",
+        "hash": "d6c5e69d",
+        "encoded": "#%201.%20Direct%20status_code%20attribute%20(openai.RateLimitError,%20httpx.HTTPStatusError,%20etc.)",
+        "prevChunkIds": []
+      },
+      "253": {
+        "chunkId": "191c85",
+        "hash": "b2e4a3a9",
+        "encoded": "status_code%20=%20getattr(exc,%20%22status_code%22,%20None)",
+        "prevChunkIds": []
+      },
+      "254": {
+        "chunkId": "191c85",
+        "hash": "130d50d9",
+        "encoded": "if%20status_code%20==%20429:",
+        "prevChunkIds": []
+      },
+      "255": {
+        "chunkId": "191c85",
+        "hash": "b235820b",
+        "encoded": "return%20True",
+        "prevChunkIds": []
+      },
+      "257": {
+        "chunkId": "191c85",
+        "hash": "8ec6c4ed",
+        "encoded": "#%202.%20Nested%20response.status_code%20(e.g.%20httpx.HTTPStatusError)",
+        "prevChunkIds": []
+      },
+      "258": {
+        "chunkId": "191c85",
+        "hash": "694c46b1",
+        "encoded": "response%20=%20getattr(exc,%20%22response%22,%20None)",
+        "prevChunkIds": []
+      },
+      "259": {
+        "chunkId": "191c85",
+        "hash": "66361e50",
+        "encoded": "if%20response%20is%20not%20None:",
+        "prevChunkIds": []
+      },
+      "260": {
+        "chunkId": "191c85",
+        "hash": "b94e8172",
+        "encoded": "resp_status%20=%20getattr(response,%20%22status_code%22,%20None)",
+        "prevChunkIds": []
+      },
+      "261": {
+        "chunkId": "191c85",
+        "hash": "1cdf58ee",
+        "encoded": "if%20resp_status%20==%20429:",
+        "prevChunkIds": []
+      },
+      "262": {
+        "chunkId": "191c85",
+        "hash": "2330bdfb",
+        "encoded": "return%20True",
+        "prevChunkIds": []
+      },
+      "264": {
+        "chunkId": "191c85",
+        "hash": "e58b5433",
+        "encoded": "#%203.%20Mistral-specific:%20'raw_status_code'%20in%20the%20error%20body%20dict.",
+        "prevChunkIds": []
+      },
+      "265": {
+        "chunkId": "191c85",
+        "hash": "0b00e5d5",
+        "encoded": "#%20%20%20%20The%20OpenAI%20SDK%20wraps%20the%20body%20in%20exc.body%20(a%20dict)%20for%20APIStatusError%20subclasses.",
+        "prevChunkIds": []
+      },
+      "266": {
+        "chunkId": "191c85",
+        "hash": "9499039d",
+        "encoded": "body%20=%20getattr(exc,%20%22body%22,%20None)",
+        "prevChunkIds": []
+      },
+      "267": {
+        "chunkId": "191c85",
+        "hash": "aa9630bb",
+        "encoded": "if%20isinstance(body,%20dict):",
+        "prevChunkIds": []
+      },
+      "268": {
+        "chunkId": "191c85",
+        "hash": "8606aa80",
+        "encoded": "if%20body.get(%22raw_status_code%22)%20==%20429:",
+        "prevChunkIds": []
+      },
+      "269": {
+        "chunkId": "191c85",
+        "hash": "740493d1",
+        "encoded": "return%20True",
+        "prevChunkIds": []
+      },
+      "270": {
+        "chunkId": "191c85",
+        "hash": "e65e844f",
+        "encoded": "#%20Also%20check%20'code':%20'1300'%20which%20Mistral%20uses%20for%20rate-limit%20errors.",
+        "prevChunkIds": []
+      },
+      "271": {
+        "chunkId": "191c85",
+        "hash": "403adba1",
+        "encoded": "if%20str(body.get(%22code%22,%20%22%22))%20==%20%221300%22:",
+        "prevChunkIds": []
+      },
+      "272": {
+        "chunkId": "191c85",
+        "hash": "2c674293",
+        "encoded": "return%20True",
+        "prevChunkIds": []
+      },
+      "273": {
+        "chunkId": "191c85",
+        "hash": "7ceeb2a1",
+        "encoded": "#%20Mistral%20error%20type%20'rate_limited'",
+        "prevChunkIds": []
+      },
+      "274": {
+        "chunkId": "191c85",
+        "hash": "aac53e83",
+        "encoded": "err_type_body%20=%20str(body.get(%22type%22,%20%22%22)%20or%20%22%22).lower()",
+        "prevChunkIds": []
+      },
+      "275": {
+        "chunkId": "191c85",
+        "hash": "12197696",
+        "encoded": "if%20%22rate_limit%22%20in%20err_type_body%20or%20err_type_body%20==%20%22rate_limited%22:",
+        "prevChunkIds": []
+      },
+      "276": {
+        "chunkId": "191c85",
+        "hash": "ffcdcd41",
+        "encoded": "return%20True",
+        "prevChunkIds": []
+      },
+      "278": {
+        "chunkId": "191c85",
+        "hash": "92bdcbcb",
+        "encoded": "#%204.%20Top-level%20'type'%20attribute%20(some%20SDK%20versions%20expose%20this%20directly).",
+        "prevChunkIds": []
+      },
+      "279": {
+        "chunkId": "191c85",
+        "hash": "3b7f54d9",
+        "encoded": "err_type%20=%20str(getattr(exc,%20%22type%22,%20%22%22)%20or%20%22%22).lower()",
+        "prevChunkIds": []
+      },
+      "280": {
+        "chunkId": "191c85",
+        "hash": "728049a8",
+        "encoded": "if%20%22rate_limit%22%20in%20err_type%20or%20err_type%20==%20%22rate_limited%22:",
+        "prevChunkIds": []
+      },
+      "281": {
+        "chunkId": "191c85",
+        "hash": "c0719794",
+        "encoded": "return%20True",
+        "prevChunkIds": []
+      },
+      "283": {
+        "chunkId": "191c85",
+        "hash": "61b8bf9e",
+        "encoded": "#%205.%20Top-level%20'code'%20attribute:%20Mistral%20uses%20code='1300'%20for%20rate%20limiting.",
+        "prevChunkIds": []
+      },
+      "284": {
+        "chunkId": "191c85",
+        "hash": "e67407c5",
+        "encoded": "err_code%20=%20str(getattr(exc,%20%22code%22,%20%22%22)%20or%20%22%22)",
+        "prevChunkIds": []
+      },
+      "285": {
+        "chunkId": "191c85",
+        "hash": "ce8701f7",
+        "encoded": "if%20err_code%20==%20%221300%22:",
+        "prevChunkIds": []
+      },
+      "286": {
+        "chunkId": "191c85",
+        "hash": "38bbcc8e",
+        "encoded": "return%20True",
+        "prevChunkIds": []
+      },
+      "288": {
+        "chunkId": "191c85",
+        "hash": "7f0c4894",
+        "encoded": "#%206.%20Fallback:%20inspect%20the%20string%20representation%20for%20common%20rate-limit%20signals.",
+        "prevChunkIds": []
+      },
+      "289": {
+        "chunkId": "191c85",
+        "hash": "d31d087b",
+        "encoded": "msg%20=%20str(exc).lower()",
+        "prevChunkIds": []
+      },
+      "290": {
+        "chunkId": "191c85",
+        "hash": "1983b814",
+        "encoded": "return%20%22429%22%20in%20msg%20or%20%22rate%20limit%22%20in%20msg%20or%20%22rate_limit%22%20in%20msg%20or%20%22rate_limited%22%20in%20msg",
+        "prevChunkIds": []
+      }
+    }
+  }
+}

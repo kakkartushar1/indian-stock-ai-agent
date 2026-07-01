@@ -1,0 +1,1904 @@
+{
+  "tests\\test_llm_provider.py": {
+    "filename": "test_llm_provider.py",
+    "path": "tests\\test_llm_provider.py",
+    "version": "1.2",
+    "contextFile": null,
+    "chunks": {
+      "c7921a": {
+        "user": "Tushar Kakkar",
+        "model": "gpt-4.1",
+        "timestamp": 1782894196,
+        "platform": "VisualStudioCode",
+        "product": "AIPP",
+        "productVersion": "2.6.1",
+        "source": "agent",
+        "type": "agentEditTool",
+        "extraContext": {
+          "promptMessage": "562a786d",
+          "files": "a8451636"
+        },
+        "hash": "4a41e65b",
+        "messageId": "system_8c5c1240-7525-11f1-9d49-07f913f4d056",
+        "codeBlockId": null,
+        "isActive": true,
+        "hoverData": "\n### Slingshot Generated Code\n\n- **user**: Tushar Kakkar\n- **model**: gpt-4.1\n- **timestamp**: 7/1/2026, 1:53:16 PM\n- **source**: agent\n- **type**: agentEditTool\n"
+      },
+      "aa65b1": {
+        "user": "Tushar Kakkar",
+        "model": "gpt-4.1",
+        "timestamp": 1782894604,
+        "platform": "VisualStudioCode",
+        "product": "AIPP",
+        "productVersion": "2.6.1",
+        "source": "agent",
+        "type": "agentEditTool",
+        "extraContext": {
+          "promptMessage": "562a786d",
+          "files": "a8451636"
+        },
+        "hash": "e69577d3",
+        "messageId": "system_8c5c1240-7525-11f1-9d49-07f913f4d056",
+        "codeBlockId": null,
+        "isActive": true,
+        "hoverData": "\n### Slingshot Generated Code\n\n- **user**: Tushar Kakkar\n- **model**: gpt-4.1\n- **timestamp**: 7/1/2026, 2:00:04 PM\n- **source**: agent\n- **type**: agentEditTool\n"
+      }
+    },
+    "lines": {
+      "0": {
+        "chunkId": "c7921a",
+        "hash": "d55481c4",
+        "encoded": "import%20os",
+        "prevChunkIds": []
+      },
+      "1": {
+        "chunkId": "c7921a",
+        "hash": "37a9cdd4",
+        "encoded": "import%20unittest",
+        "prevChunkIds": []
+      },
+      "2": {
+        "chunkId": "c7921a",
+        "hash": "a8e82b78",
+        "encoded": "from%20io%20import%20StringIO",
+        "prevChunkIds": []
+      },
+      "3": {
+        "chunkId": "c7921a",
+        "hash": "7bb5fe94",
+        "encoded": "from%20unittest.mock%20import%20MagicMock,%20call,%20patch",
+        "prevChunkIds": []
+      },
+      "5": {
+        "chunkId": "c7921a",
+        "hash": "6c439ab5",
+        "encoded": "import%20llm_provider",
+        "prevChunkIds": []
+      },
+      "6": {
+        "chunkId": "c7921a",
+        "hash": "430781b0",
+        "encoded": "from%20llm_provider%20import%20(",
+        "prevChunkIds": []
+      },
+      "7": {
+        "chunkId": "c7921a",
+        "hash": "0d29436e",
+        "encoded": "LLMConfigurationError,",
+        "prevChunkIds": []
+      },
+      "8": {
+        "chunkId": "c7921a",
+        "hash": "328d1643",
+        "encoded": "_call_mistral_with_fallback,",
+        "prevChunkIds": []
+      },
+      "9": {
+        "chunkId": "c7921a",
+        "hash": "9bcffb06",
+        "encoded": "_is_rate_limit_error,",
+        "prevChunkIds": []
+      },
+      "10": {
+        "chunkId": "c7921a",
+        "hash": "a846ac05",
+        "encoded": "clear_provider_cache,",
+        "prevChunkIds": []
+      },
+      "11": {
+        "chunkId": "c7921a",
+        "hash": "c8316326",
+        "encoded": "load_llm_config,",
+        "prevChunkIds": []
+      },
+      "12": {
+        "chunkId": "c7921a",
+        "hash": "e3174527",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "110": {
+        "chunkId": "aa65b1",
+        "hash": "2ad2e68f",
+        "encoded": "class%20_RateLimitError(Exception):",
+        "prevChunkIds": []
+      },
+      "111": {
+        "chunkId": "aa65b1",
+        "hash": "12ffb912",
+        "encoded": "%22%22%22Simulated%20429%20rate-limit%20error%20via%20status_code%20attribute.%22%22%22",
+        "prevChunkIds": []
+      },
+      "113": {
+        "chunkId": "aa65b1",
+        "hash": "04dcf147",
+        "encoded": "status_code%20=%20429",
+        "prevChunkIds": []
+      },
+      "116": {
+        "chunkId": "aa65b1",
+        "hash": "6745de19",
+        "encoded": "class%20_MistralBodyRateLimitError(Exception):",
+        "prevChunkIds": []
+      },
+      "117": {
+        "chunkId": "aa65b1",
+        "hash": "45ceb844",
+        "encoded": "%22%22%22Simulated%20Mistral%20429%20error%20with%20the%20exact%20body%20format%20Mistral%20returns.",
+        "prevChunkIds": []
+      },
+      "119": {
+        "chunkId": "aa65b1",
+        "hash": "7c21eb48",
+        "encoded": "Error%20body%20format:",
+        "prevChunkIds": []
+      },
+      "120": {
+        "chunkId": "aa65b1",
+        "hash": "86130c88",
+        "encoded": "%7B'object':%20'error',%20'message':%20'Rate%20limit%20exceeded',%20'type':%20'rate_limited',",
+        "prevChunkIds": []
+      },
+      "121": {
+        "chunkId": "aa65b1",
+        "hash": "1aeb4ea8",
+        "encoded": "'param':%20None,%20'code':%20'1300',%20'raw_status_code':%20429%7D",
+        "prevChunkIds": []
+      },
+      "122": {
+        "chunkId": "aa65b1",
+        "hash": "df7ec570",
+        "encoded": "%22%22%22",
+        "prevChunkIds": []
+      },
+      "124": {
+        "chunkId": "aa65b1",
+        "hash": "a3486f09",
+        "encoded": "body%20=%20%7B",
+        "prevChunkIds": []
+      },
+      "125": {
+        "chunkId": "aa65b1",
+        "hash": "94a8b550",
+        "encoded": "%22object%22:%20%22error%22,",
+        "prevChunkIds": []
+      },
+      "126": {
+        "chunkId": "aa65b1",
+        "hash": "2807d1cc",
+        "encoded": "%22message%22:%20%22Rate%20limit%20exceeded%22,",
+        "prevChunkIds": []
+      },
+      "127": {
+        "chunkId": "aa65b1",
+        "hash": "6a90723d",
+        "encoded": "%22type%22:%20%22rate_limited%22,",
+        "prevChunkIds": []
+      },
+      "128": {
+        "chunkId": "aa65b1",
+        "hash": "1901149d",
+        "encoded": "%22param%22:%20None,",
+        "prevChunkIds": []
+      },
+      "129": {
+        "chunkId": "aa65b1",
+        "hash": "4b9a5334",
+        "encoded": "%22code%22:%20%221300%22,",
+        "prevChunkIds": []
+      },
+      "130": {
+        "chunkId": "aa65b1",
+        "hash": "4dd2bd1c",
+        "encoded": "%22raw_status_code%22:%20429,",
+        "prevChunkIds": []
+      },
+      "131": {
+        "chunkId": "aa65b1",
+        "hash": "c1055582",
+        "encoded": "%7D",
+        "prevChunkIds": []
+      },
+      "134": {
+        "chunkId": "aa65b1",
+        "hash": "6a47a850",
+        "encoded": "class%20_MistralCode1300Error(Exception):",
+        "prevChunkIds": []
+      },
+      "135": {
+        "chunkId": "aa65b1",
+        "hash": "e10ddb6b",
+        "encoded": "%22%22%22Simulated%20Mistral%20error%20with%20code=1300%20but%20no%20raw_status_code.%22%22%22",
+        "prevChunkIds": []
+      },
+      "137": {
+        "chunkId": "aa65b1",
+        "hash": "627db49b",
+        "encoded": "body%20=%20%7B%22object%22:%20%22error%22,%20%22message%22:%20%22Rate%20limit%20exceeded%22,%20%22code%22:%20%221300%22%7D",
+        "prevChunkIds": []
+      },
+      "140": {
+        "chunkId": "aa65b1",
+        "hash": "7196d4f3",
+        "encoded": "class%20_MistralTypeRateLimitedError(Exception):",
+        "prevChunkIds": []
+      },
+      "141": {
+        "chunkId": "aa65b1",
+        "hash": "db8965f6",
+        "encoded": "%22%22%22Simulated%20Mistral%20error%20with%20type='rate_limited'%20in%20body.%22%22%22",
+        "prevChunkIds": []
+      },
+      "143": {
+        "chunkId": "aa65b1",
+        "hash": "d9d17c88",
+        "encoded": "body%20=%20%7B%22object%22:%20%22error%22,%20%22message%22:%20%22Rate%20limit%20exceeded%22,%20%22type%22:%20%22rate_limited%22%7D",
+        "prevChunkIds": []
+      },
+      "146": {
+        "chunkId": "aa65b1",
+        "hash": "ef30e3a1",
+        "encoded": "class%20_AuthError(Exception):",
+        "prevChunkIds": []
+      },
+      "147": {
+        "chunkId": "aa65b1",
+        "hash": "3f1fdb86",
+        "encoded": "%22%22%22Simulated%20non-429%20authentication%20error.%22%22%22",
+        "prevChunkIds": []
+      },
+      "149": {
+        "chunkId": "aa65b1",
+        "hash": "b6948275",
+        "encoded": "status_code%20=%20401",
+        "prevChunkIds": []
+      },
+      "152": {
+        "chunkId": "aa65b1",
+        "hash": "a2ead837",
+        "encoded": "class%20_ServerError(Exception):",
+        "prevChunkIds": []
+      },
+      "153": {
+        "chunkId": "aa65b1",
+        "hash": "a0d4a12e",
+        "encoded": "%22%22%22Simulated%20non-429%20server%20error.%22%22%22",
+        "prevChunkIds": []
+      },
+      "155": {
+        "chunkId": "aa65b1",
+        "hash": "d50627c0",
+        "encoded": "status_code%20=%20500",
+        "prevChunkIds": []
+      },
+      "158": {
+        "chunkId": "aa65b1",
+        "hash": "dcf10468",
+        "encoded": "class%20IsRateLimitErrorTests(unittest.TestCase):",
+        "prevChunkIds": []
+      },
+      "159": {
+        "chunkId": "aa65b1",
+        "hash": "3bd31ca6",
+        "encoded": "%22%22%22Unit%20tests%20for%20_is_rate_limit_error%20covering%20all%20detection%20paths.%22%22%22",
+        "prevChunkIds": []
+      },
+      "161": {
+        "chunkId": "aa65b1",
+        "hash": "a7df64ae",
+        "encoded": "def%20test_status_code_429_returns_true(self):",
+        "prevChunkIds": []
+      },
+      "162": {
+        "chunkId": "aa65b1",
+        "hash": "74ae024a",
+        "encoded": "%22%22%22Direct%20status_code=429%20attribute%20triggers%20rate-limit%20detection.%22%22%22",
+        "prevChunkIds": []
+      },
+      "163": {
+        "chunkId": "aa65b1",
+        "hash": "c6d9351b",
+        "encoded": "self.assertTrue(_is_rate_limit_error(_RateLimitError(%22too%20many%20requests%22)))",
+        "prevChunkIds": []
+      },
+      "165": {
+        "chunkId": "aa65b1",
+        "hash": "75589200",
+        "encoded": "def%20test_non_429_status_code_returns_false(self):",
+        "prevChunkIds": []
+      },
+      "166": {
+        "chunkId": "aa65b1",
+        "hash": "5a580e1b",
+        "encoded": "%22%22%22Non-429%20status%20codes%20do%20NOT%20trigger%20rate-limit%20detection.%22%22%22",
+        "prevChunkIds": []
+      },
+      "167": {
+        "chunkId": "aa65b1",
+        "hash": "1bea3354",
+        "encoded": "self.assertFalse(_is_rate_limit_error(_AuthError(%22unauthorized%22)))",
+        "prevChunkIds": []
+      },
+      "168": {
+        "chunkId": "aa65b1",
+        "hash": "3337ec98",
+        "encoded": "self.assertFalse(_is_rate_limit_error(_ServerError(%22internal%20server%20error%22)))",
+        "prevChunkIds": []
+      },
+      "170": {
+        "chunkId": "aa65b1",
+        "hash": "148ab422",
+        "encoded": "def%20test_string_fallback_429_in_message(self):",
+        "prevChunkIds": []
+      },
+      "171": {
+        "chunkId": "aa65b1",
+        "hash": "724ef9a3",
+        "encoded": "%22%22%22'429'%20in%20the%20exception%20string%20triggers%20rate-limit%20detection.%22%22%22",
+        "prevChunkIds": []
+      },
+      "172": {
+        "chunkId": "aa65b1",
+        "hash": "05a3b4d6",
+        "encoded": "exc%20=%20Exception(%22HTTP%20429%20rate%20limit%20exceeded%22)",
+        "prevChunkIds": []
+      },
+      "173": {
+        "chunkId": "aa65b1",
+        "hash": "bb33e109",
+        "encoded": "self.assertTrue(_is_rate_limit_error(exc))",
+        "prevChunkIds": []
+      },
+      "175": {
+        "chunkId": "aa65b1",
+        "hash": "2d8f8ef8",
+        "encoded": "def%20test_string_fallback_rate_limit_in_message(self):",
+        "prevChunkIds": []
+      },
+      "176": {
+        "chunkId": "aa65b1",
+        "hash": "ee7ac522",
+        "encoded": "%22%22%22'rate%20limit'%20in%20the%20exception%20string%20triggers%20rate-limit%20detection.%22%22%22",
+        "prevChunkIds": []
+      },
+      "177": {
+        "chunkId": "aa65b1",
+        "hash": "3b4fd2bd",
+        "encoded": "exc%20=%20Exception(%22Error:%20Rate%20Limit%20Exceeded%22)",
+        "prevChunkIds": []
+      },
+      "178": {
+        "chunkId": "aa65b1",
+        "hash": "842a4ae1",
+        "encoded": "self.assertTrue(_is_rate_limit_error(exc))",
+        "prevChunkIds": []
+      },
+      "180": {
+        "chunkId": "aa65b1",
+        "hash": "c56dccf4",
+        "encoded": "def%20test_mistral_body_raw_status_code_429(self):",
+        "prevChunkIds": []
+      },
+      "181": {
+        "chunkId": "aa65b1",
+        "hash": "3da6821e",
+        "encoded": "%22%22%22Mistral%20error%20body%20with%20raw_status_code=429%20triggers%20rate-limit%20detection.%22%22%22",
+        "prevChunkIds": []
+      },
+      "182": {
+        "chunkId": "aa65b1",
+        "hash": "7d692ef4",
+        "encoded": "self.assertTrue(_is_rate_limit_error(_MistralBodyRateLimitError(%22rate%20limited%22)))",
+        "prevChunkIds": []
+      },
+      "184": {
+        "chunkId": "aa65b1",
+        "hash": "de3313bb",
+        "encoded": "def%20test_mistral_body_code_1300(self):",
+        "prevChunkIds": []
+      },
+      "185": {
+        "chunkId": "aa65b1",
+        "hash": "065d36e8",
+        "encoded": "%22%22%22Mistral%20error%20body%20with%20code='1300'%20triggers%20rate-limit%20detection.%22%22%22",
+        "prevChunkIds": []
+      },
+      "186": {
+        "chunkId": "aa65b1",
+        "hash": "82336f1f",
+        "encoded": "self.assertTrue(_is_rate_limit_error(_MistralCode1300Error(%22rate%20limited%22)))",
+        "prevChunkIds": []
+      },
+      "188": {
+        "chunkId": "aa65b1",
+        "hash": "1405cec0",
+        "encoded": "def%20test_mistral_body_type_rate_limited(self):",
+        "prevChunkIds": []
+      },
+      "189": {
+        "chunkId": "aa65b1",
+        "hash": "dc0176d2",
+        "encoded": "%22%22%22Mistral%20error%20body%20with%20type='rate_limited'%20triggers%20rate-limit%20detection.%22%22%22",
+        "prevChunkIds": []
+      },
+      "190": {
+        "chunkId": "aa65b1",
+        "hash": "c71bf7e5",
+        "encoded": "self.assertTrue(_is_rate_limit_error(_MistralTypeRateLimitedError(%22rate%20limited%22)))",
+        "prevChunkIds": []
+      },
+      "192": {
+        "chunkId": "aa65b1",
+        "hash": "48a7ebb9",
+        "encoded": "def%20test_response_status_code_429(self):",
+        "prevChunkIds": []
+      },
+      "193": {
+        "chunkId": "aa65b1",
+        "hash": "98abe490",
+        "encoded": "%22%22%22Nested%20response.status_code=429%20triggers%20rate-limit%20detection.%22%22%22",
+        "prevChunkIds": []
+      },
+      "194": {
+        "chunkId": "aa65b1",
+        "hash": "0b1eb923",
+        "encoded": "exc%20=%20Exception(%22HTTP%20error%22)",
+        "prevChunkIds": []
+      },
+      "195": {
+        "chunkId": "aa65b1",
+        "hash": "083f9152",
+        "encoded": "mock_response%20=%20MagicMock()",
+        "prevChunkIds": []
+      },
+      "196": {
+        "chunkId": "aa65b1",
+        "hash": "b03989b9",
+        "encoded": "mock_response.status_code%20=%20429",
+        "prevChunkIds": []
+      },
+      "197": {
+        "chunkId": "aa65b1",
+        "hash": "cf83516d",
+        "encoded": "exc.response%20=%20mock_response",
+        "prevChunkIds": []
+      },
+      "198": {
+        "chunkId": "aa65b1",
+        "hash": "54323e99",
+        "encoded": "self.assertTrue(_is_rate_limit_error(exc))",
+        "prevChunkIds": []
+      },
+      "200": {
+        "chunkId": "aa65b1",
+        "hash": "9be1d01c",
+        "encoded": "def%20test_top_level_type_rate_limited(self):",
+        "prevChunkIds": []
+      },
+      "201": {
+        "chunkId": "aa65b1",
+        "hash": "0132570e",
+        "encoded": "%22%22%22Top-level%20'type'%20attribute%20of%20'rate_limited'%20triggers%20detection.%22%22%22",
+        "prevChunkIds": []
+      },
+      "202": {
+        "chunkId": "aa65b1",
+        "hash": "da256ea0",
+        "encoded": "exc%20=%20Exception(%22rate%20limited%22)",
+        "prevChunkIds": []
+      },
+      "203": {
+        "chunkId": "aa65b1",
+        "hash": "0587fd0d",
+        "encoded": "exc.type%20=%20%22rate_limited%22%20%20#%20type:%20ignore%5Battr-defined%5D",
+        "prevChunkIds": []
+      },
+      "204": {
+        "chunkId": "aa65b1",
+        "hash": "67c5497a",
+        "encoded": "self.assertTrue(_is_rate_limit_error(exc))",
+        "prevChunkIds": []
+      },
+      "206": {
+        "chunkId": "aa65b1",
+        "hash": "d3385715",
+        "encoded": "def%20test_top_level_code_1300(self):",
+        "prevChunkIds": []
+      },
+      "207": {
+        "chunkId": "aa65b1",
+        "hash": "c8f9f365",
+        "encoded": "%22%22%22Top-level%20'code'%20attribute%20of%20'1300'%20triggers%20detection.%22%22%22",
+        "prevChunkIds": []
+      },
+      "208": {
+        "chunkId": "aa65b1",
+        "hash": "09b4dd04",
+        "encoded": "exc%20=%20Exception(%22rate%20limited%22)",
+        "prevChunkIds": []
+      },
+      "209": {
+        "chunkId": "aa65b1",
+        "hash": "a0df34dc",
+        "encoded": "exc.code%20=%20%221300%22%20%20#%20type:%20ignore%5Battr-defined%5D",
+        "prevChunkIds": []
+      },
+      "210": {
+        "chunkId": "aa65b1",
+        "hash": "55e19266",
+        "encoded": "self.assertTrue(_is_rate_limit_error(exc))",
+        "prevChunkIds": []
+      },
+      "212": {
+        "chunkId": "aa65b1",
+        "hash": "109c2c36",
+        "encoded": "def%20test_plain_exception_no_rate_limit_returns_false(self):",
+        "prevChunkIds": []
+      },
+      "213": {
+        "chunkId": "aa65b1",
+        "hash": "8332bf82",
+        "encoded": "%22%22%22A%20plain%20exception%20with%20no%20rate-limit%20signals%20returns%20False.%22%22%22",
+        "prevChunkIds": []
+      },
+      "214": {
+        "chunkId": "aa65b1",
+        "hash": "0b58846d",
+        "encoded": "self.assertFalse(_is_rate_limit_error(Exception(%22something%20went%20wrong%22)))",
+        "prevChunkIds": []
+      },
+      "215": {
+        "chunkId": "aa65b1",
+        "hash": "96d6a958",
+        "encoded": "self.assertFalse(_is_rate_limit_error(ValueError(%22invalid%20value%22)))",
+        "prevChunkIds": []
+      },
+      "218": {
+        "chunkId": "aa65b1",
+        "hash": "6f62d683",
+        "encoded": "class%20MistralFallbackTests(unittest.TestCase):",
+        "prevChunkIds": []
+      },
+      "219": {
+        "chunkId": "aa65b1",
+        "hash": "cbe9c86e",
+        "encoded": "%22%22%22Unit%20tests%20for%20_call_mistral_with_fallback.%22%22%22",
+        "prevChunkIds": []
+      },
+      "221": {
+        "chunkId": "aa65b1",
+        "hash": "adbfe2dc",
+        "encoded": "def%20_make_fn(self,%20side_effects:%20list):",
+        "prevChunkIds": []
+      },
+      "222": {
+        "chunkId": "aa65b1",
+        "hash": "a32b9b7f",
+        "encoded": "%22%22%22Return%20a%20mock%20callable%20whose%20successive%20calls%20raise%20or%20return%20the%20given%20values.%22%22%22",
+        "prevChunkIds": []
+      },
+      "223": {
+        "chunkId": "aa65b1",
+        "hash": "8c140103",
+        "encoded": "mock%20=%20MagicMock(side_effect=side_effects)",
+        "prevChunkIds": []
+      },
+      "224": {
+        "chunkId": "aa65b1",
+        "hash": "88808efb",
+        "encoded": "return%20mock",
+        "prevChunkIds": []
+      },
+      "226": {
+        "chunkId": "aa65b1",
+        "hash": "b1c1bb50",
+        "encoded": "#%20------------------------------------------------------------------",
+        "prevChunkIds": []
+      },
+      "227": {
+        "chunkId": "aa65b1",
+        "hash": "c75b256f",
+        "encoded": "#%20Key%20rotation%20behaviour",
+        "prevChunkIds": []
+      },
+      "228": {
+        "chunkId": "aa65b1",
+        "hash": "cdb49e41",
+        "encoded": "#%20------------------------------------------------------------------",
+        "prevChunkIds": []
+      },
+      "230": {
+        "chunkId": "aa65b1",
+        "hash": "0532cd1b",
+        "encoded": "def%20test_primary_key_success_no_rotation(self):",
+        "prevChunkIds": []
+      },
+      "231": {
+        "chunkId": "aa65b1",
+        "hash": "c19e257c",
+        "encoded": "%22%22%22Primary%20key%20works;%20secondary%20and%20tertiary%20are%20never%20called.%22%22%22",
+        "prevChunkIds": []
+      },
+      "232": {
+        "chunkId": "aa65b1",
+        "hash": "8cd697f2",
+        "encoded": "expected%20=%20%7B%22result%22:%20%22ok%22%7D",
+        "prevChunkIds": []
+      },
+      "233": {
+        "chunkId": "aa65b1",
+        "hash": "33282470",
+        "encoded": "fn%20=%20self._make_fn(%5Bexpected%5D)",
+        "prevChunkIds": []
+      },
+      "234": {
+        "chunkId": "aa65b1",
+        "hash": "16b16efa",
+        "encoded": "result%20=%20_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "235": {
+        "chunkId": "aa65b1",
+        "hash": "47865456",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "236": {
+        "chunkId": "aa65b1",
+        "hash": "dbf44771",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22,%20%22key-tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "237": {
+        "chunkId": "aa65b1",
+        "hash": "479839a0",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22,%20%22tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "238": {
+        "chunkId": "aa65b1",
+        "hash": "dbcd01dd",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "239": {
+        "chunkId": "aa65b1",
+        "hash": "e32a786a",
+        "encoded": "self.assertEqual(result,%20expected)",
+        "prevChunkIds": []
+      },
+      "240": {
+        "chunkId": "aa65b1",
+        "hash": "15a65e21",
+        "encoded": "fn.assert_called_once_with(%22key-primary%22)",
+        "prevChunkIds": []
+      },
+      "242": {
+        "chunkId": "aa65b1",
+        "hash": "7e678415",
+        "encoded": "def%20test_primary_429_rotates_to_secondary(self):",
+        "prevChunkIds": []
+      },
+      "243": {
+        "chunkId": "aa65b1",
+        "hash": "2aa2b7b2",
+        "encoded": "%22%22%22Primary%20returns%20429;%20secondary%20succeeds;%20tertiary%20never%20called.%22%22%22",
+        "prevChunkIds": []
+      },
+      "244": {
+        "chunkId": "aa65b1",
+        "hash": "3509e6e9",
+        "encoded": "expected%20=%20%7B%22result%22:%20%22secondary%20ok%22%7D",
+        "prevChunkIds": []
+      },
+      "245": {
+        "chunkId": "aa65b1",
+        "hash": "ecd3c63f",
+        "encoded": "fn%20=%20self._make_fn(%5B_RateLimitError(%22rate%20limited%22),%20expected%5D)",
+        "prevChunkIds": []
+      },
+      "246": {
+        "chunkId": "aa65b1",
+        "hash": "2ebf3206",
+        "encoded": "result%20=%20_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "247": {
+        "chunkId": "aa65b1",
+        "hash": "87a0ff6b",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "248": {
+        "chunkId": "aa65b1",
+        "hash": "7fc16f54",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22,%20%22key-tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "249": {
+        "chunkId": "aa65b1",
+        "hash": "8c84eb98",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22,%20%22tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "250": {
+        "chunkId": "aa65b1",
+        "hash": "04b36d58",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "251": {
+        "chunkId": "aa65b1",
+        "hash": "b410d118",
+        "encoded": "self.assertEqual(result,%20expected)",
+        "prevChunkIds": []
+      },
+      "252": {
+        "chunkId": "aa65b1",
+        "hash": "290c70c6",
+        "encoded": "self.assertEqual(fn.call_count,%202)",
+        "prevChunkIds": []
+      },
+      "253": {
+        "chunkId": "aa65b1",
+        "hash": "d9257b6d",
+        "encoded": "fn.assert_any_call(%22key-primary%22)",
+        "prevChunkIds": []
+      },
+      "254": {
+        "chunkId": "aa65b1",
+        "hash": "88f238fc",
+        "encoded": "fn.assert_any_call(%22key-secondary%22)",
+        "prevChunkIds": []
+      },
+      "256": {
+        "chunkId": "aa65b1",
+        "hash": "6f320316",
+        "encoded": "def%20test_primary_and_secondary_429_rotates_to_tertiary(self):",
+        "prevChunkIds": []
+      },
+      "257": {
+        "chunkId": "aa65b1",
+        "hash": "c6834e78",
+        "encoded": "%22%22%22Primary%20and%20secondary%20return%20429;%20tertiary%20succeeds.%22%22%22",
+        "prevChunkIds": []
+      },
+      "258": {
+        "chunkId": "aa65b1",
+        "hash": "f402965a",
+        "encoded": "expected%20=%20%7B%22result%22:%20%22tertiary%20ok%22%7D",
+        "prevChunkIds": []
+      },
+      "259": {
+        "chunkId": "aa65b1",
+        "hash": "e6a8fbcc",
+        "encoded": "fn%20=%20self._make_fn(",
+        "prevChunkIds": []
+      },
+      "260": {
+        "chunkId": "aa65b1",
+        "hash": "433b60ee",
+        "encoded": "%5B_RateLimitError(%22rate%20limited%22),%20_RateLimitError(%22rate%20limited%22),%20expected%5D",
+        "prevChunkIds": []
+      },
+      "261": {
+        "chunkId": "aa65b1",
+        "hash": "3a55c5de",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "262": {
+        "chunkId": "aa65b1",
+        "hash": "755b60ce",
+        "encoded": "result%20=%20_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "263": {
+        "chunkId": "aa65b1",
+        "hash": "9b92e8a8",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "264": {
+        "chunkId": "aa65b1",
+        "hash": "b89d9fcf",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22,%20%22key-tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "265": {
+        "chunkId": "aa65b1",
+        "hash": "1d9b1822",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22,%20%22tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "266": {
+        "chunkId": "aa65b1",
+        "hash": "c88094ac",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "267": {
+        "chunkId": "aa65b1",
+        "hash": "5e5b6e21",
+        "encoded": "self.assertEqual(result,%20expected)",
+        "prevChunkIds": []
+      },
+      "268": {
+        "chunkId": "aa65b1",
+        "hash": "6e52aa12",
+        "encoded": "self.assertEqual(fn.call_count,%203)",
+        "prevChunkIds": []
+      },
+      "269": {
+        "chunkId": "aa65b1",
+        "hash": "50e1cea7",
+        "encoded": "fn.assert_any_call(%22key-primary%22)",
+        "prevChunkIds": []
+      },
+      "270": {
+        "chunkId": "aa65b1",
+        "hash": "ba70fded",
+        "encoded": "fn.assert_any_call(%22key-secondary%22)",
+        "prevChunkIds": []
+      },
+      "271": {
+        "chunkId": "aa65b1",
+        "hash": "a503cf3a",
+        "encoded": "fn.assert_any_call(%22key-tertiary%22)",
+        "prevChunkIds": []
+      },
+      "273": {
+        "chunkId": "aa65b1",
+        "hash": "358eb5fa",
+        "encoded": "def%20test_all_keys_429_raises_configuration_error(self):",
+        "prevChunkIds": []
+      },
+      "274": {
+        "chunkId": "aa65b1",
+        "hash": "0b1476ae",
+        "encoded": "%22%22%22All%20three%20keys%20return%20429;%20raises%20LLMConfigurationError.%22%22%22",
+        "prevChunkIds": []
+      },
+      "275": {
+        "chunkId": "aa65b1",
+        "hash": "720053ed",
+        "encoded": "fn%20=%20self._make_fn(",
+        "prevChunkIds": []
+      },
+      "276": {
+        "chunkId": "aa65b1",
+        "hash": "e1b9e77a",
+        "encoded": "%5B",
+        "prevChunkIds": []
+      },
+      "277": {
+        "chunkId": "aa65b1",
+        "hash": "9e60d24e",
+        "encoded": "_RateLimitError(%22rate%20limited%22),",
+        "prevChunkIds": []
+      },
+      "278": {
+        "chunkId": "aa65b1",
+        "hash": "8591a331",
+        "encoded": "_RateLimitError(%22rate%20limited%22),",
+        "prevChunkIds": []
+      },
+      "279": {
+        "chunkId": "aa65b1",
+        "hash": "256c6dcd",
+        "encoded": "_RateLimitError(%22rate%20limited%22),",
+        "prevChunkIds": []
+      },
+      "280": {
+        "chunkId": "aa65b1",
+        "hash": "6b6fc62f",
+        "encoded": "%5D",
+        "prevChunkIds": []
+      },
+      "281": {
+        "chunkId": "aa65b1",
+        "hash": "1a066076",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "282": {
+        "chunkId": "aa65b1",
+        "hash": "943ce3d9",
+        "encoded": "with%20self.assertRaises(LLMConfigurationError)%20as%20ctx:",
+        "prevChunkIds": []
+      },
+      "283": {
+        "chunkId": "aa65b1",
+        "hash": "060ad374",
+        "encoded": "_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "284": {
+        "chunkId": "aa65b1",
+        "hash": "9e548d20",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "285": {
+        "chunkId": "aa65b1",
+        "hash": "8c896a1b",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22,%20%22key-tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "286": {
+        "chunkId": "aa65b1",
+        "hash": "8874587d",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22,%20%22tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "287": {
+        "chunkId": "aa65b1",
+        "hash": "d80ca57b",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "288": {
+        "chunkId": "aa65b1",
+        "hash": "57d11cd1",
+        "encoded": "self.assertIn(%22exhausted%22,%20str(ctx.exception).lower())",
+        "prevChunkIds": []
+      },
+      "289": {
+        "chunkId": "aa65b1",
+        "hash": "d9339b98",
+        "encoded": "self.assertEqual(fn.call_count,%203)",
+        "prevChunkIds": []
+      },
+      "291": {
+        "chunkId": "aa65b1",
+        "hash": "47dbf036",
+        "encoded": "def%20test_non_429_error_does_not_rotate(self):",
+        "prevChunkIds": []
+      },
+      "292": {
+        "chunkId": "aa65b1",
+        "hash": "44db1370",
+        "encoded": "%22%22%22Primary%20returns%20a%20non-429%20error;%20raises%20immediately%20without%20trying%20secondary.%22%22%22",
+        "prevChunkIds": []
+      },
+      "293": {
+        "chunkId": "aa65b1",
+        "hash": "d56c8bba",
+        "encoded": "fn%20=%20self._make_fn(%5B_AuthError(%22invalid%20api%20key%22)%5D)",
+        "prevChunkIds": []
+      },
+      "294": {
+        "chunkId": "aa65b1",
+        "hash": "b26a89e5",
+        "encoded": "with%20self.assertRaises(_AuthError):",
+        "prevChunkIds": []
+      },
+      "295": {
+        "chunkId": "aa65b1",
+        "hash": "33a4ac00",
+        "encoded": "_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "296": {
+        "chunkId": "aa65b1",
+        "hash": "a8aacaf2",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "297": {
+        "chunkId": "aa65b1",
+        "hash": "dcfac7d7",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22,%20%22key-tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "298": {
+        "chunkId": "aa65b1",
+        "hash": "3c5316a1",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22,%20%22tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "299": {
+        "chunkId": "aa65b1",
+        "hash": "53db4cfe",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "300": {
+        "chunkId": "aa65b1",
+        "hash": "87788a7e",
+        "encoded": "#%20Only%20the%20primary%20key%20was%20attempted.",
+        "prevChunkIds": []
+      },
+      "301": {
+        "chunkId": "aa65b1",
+        "hash": "b853280e",
+        "encoded": "fn.assert_called_once_with(%22key-primary%22)",
+        "prevChunkIds": []
+      },
+      "303": {
+        "chunkId": "aa65b1",
+        "hash": "b7ea684c",
+        "encoded": "def%20test_server_error_does_not_rotate(self):",
+        "prevChunkIds": []
+      },
+      "304": {
+        "chunkId": "aa65b1",
+        "hash": "eb44d215",
+        "encoded": "%22%22%22A%20500%20server%20error%20on%20primary%20does%20NOT%20trigger%20key%20rotation.%22%22%22",
+        "prevChunkIds": []
+      },
+      "305": {
+        "chunkId": "aa65b1",
+        "hash": "29fa7fc0",
+        "encoded": "fn%20=%20self._make_fn(%5B_ServerError(%22internal%20server%20error%22)%5D)",
+        "prevChunkIds": []
+      },
+      "306": {
+        "chunkId": "aa65b1",
+        "hash": "fdaca422",
+        "encoded": "with%20self.assertRaises(_ServerError):",
+        "prevChunkIds": []
+      },
+      "307": {
+        "chunkId": "aa65b1",
+        "hash": "3755a326",
+        "encoded": "_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "308": {
+        "chunkId": "aa65b1",
+        "hash": "7f2d70f2",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "309": {
+        "chunkId": "aa65b1",
+        "hash": "3a07aeac",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22,%20%22key-tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "310": {
+        "chunkId": "aa65b1",
+        "hash": "b8950662",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22,%20%22tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "311": {
+        "chunkId": "aa65b1",
+        "hash": "c400c7e7",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "312": {
+        "chunkId": "aa65b1",
+        "hash": "46751e99",
+        "encoded": "fn.assert_called_once_with(%22key-primary%22)",
+        "prevChunkIds": []
+      },
+      "314": {
+        "chunkId": "aa65b1",
+        "hash": "77738d70",
+        "encoded": "def%20test_empty_key_list_raises_immediately(self):",
+        "prevChunkIds": []
+      },
+      "315": {
+        "chunkId": "aa65b1",
+        "hash": "37c8b438",
+        "encoded": "%22%22%22Empty%20key%20list%20raises%20LLMConfigurationError%20immediately.%22%22%22",
+        "prevChunkIds": []
+      },
+      "316": {
+        "chunkId": "aa65b1",
+        "hash": "6d215f8d",
+        "encoded": "fn%20=%20self._make_fn(%5B%5D)",
+        "prevChunkIds": []
+      },
+      "317": {
+        "chunkId": "aa65b1",
+        "hash": "dda22532",
+        "encoded": "with%20self.assertRaises(LLMConfigurationError):",
+        "prevChunkIds": []
+      },
+      "318": {
+        "chunkId": "aa65b1",
+        "hash": "999b0755",
+        "encoded": "_call_mistral_with_fallback(fn,%20api_keys=%5B%5D,%20key_labels=%5B%5D)",
+        "prevChunkIds": []
+      },
+      "319": {
+        "chunkId": "aa65b1",
+        "hash": "54fd5127",
+        "encoded": "fn.assert_not_called()",
+        "prevChunkIds": []
+      },
+      "321": {
+        "chunkId": "aa65b1",
+        "hash": "0b3931d3",
+        "encoded": "def%20test_mistral_body_429_triggers_rotation(self):",
+        "prevChunkIds": []
+      },
+      "322": {
+        "chunkId": "aa65b1",
+        "hash": "b3322515",
+        "encoded": "%22%22%22Mistral's%20exact%20error%20body%20format%20(raw_status_code:%20429)%20triggers%20rotation.%22%22%22",
+        "prevChunkIds": []
+      },
+      "323": {
+        "chunkId": "aa65b1",
+        "hash": "9a290f6b",
+        "encoded": "expected%20=%20%7B%22result%22:%20%22secondary%20ok%22%7D",
+        "prevChunkIds": []
+      },
+      "324": {
+        "chunkId": "aa65b1",
+        "hash": "7862af42",
+        "encoded": "fn%20=%20self._make_fn(%5B_MistralBodyRateLimitError(%22rate%20limited%22),%20expected%5D)",
+        "prevChunkIds": []
+      },
+      "325": {
+        "chunkId": "aa65b1",
+        "hash": "9429f429",
+        "encoded": "result%20=%20_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "326": {
+        "chunkId": "aa65b1",
+        "hash": "c494d34f",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "327": {
+        "chunkId": "aa65b1",
+        "hash": "05eae978",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22%5D,",
+        "prevChunkIds": []
+      },
+      "328": {
+        "chunkId": "aa65b1",
+        "hash": "d7e57ef3",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22%5D,",
+        "prevChunkIds": []
+      },
+      "329": {
+        "chunkId": "aa65b1",
+        "hash": "627d4eff",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "330": {
+        "chunkId": "aa65b1",
+        "hash": "041623fd",
+        "encoded": "self.assertEqual(result,%20expected)",
+        "prevChunkIds": []
+      },
+      "331": {
+        "chunkId": "aa65b1",
+        "hash": "f67fa3db",
+        "encoded": "self.assertEqual(fn.call_count,%202)",
+        "prevChunkIds": []
+      },
+      "333": {
+        "chunkId": "aa65b1",
+        "hash": "4df48677",
+        "encoded": "def%20test_mistral_code_1300_triggers_rotation(self):",
+        "prevChunkIds": []
+      },
+      "334": {
+        "chunkId": "aa65b1",
+        "hash": "73d95360",
+        "encoded": "%22%22%22Mistral%20error%20with%20code='1300'%20in%20body%20triggers%20rotation.%22%22%22",
+        "prevChunkIds": []
+      },
+      "335": {
+        "chunkId": "aa65b1",
+        "hash": "59f00f4c",
+        "encoded": "expected%20=%20%7B%22result%22:%20%22secondary%20ok%22%7D",
+        "prevChunkIds": []
+      },
+      "336": {
+        "chunkId": "aa65b1",
+        "hash": "81f0712e",
+        "encoded": "fn%20=%20self._make_fn(%5B_MistralCode1300Error(%22rate%20limited%22),%20expected%5D)",
+        "prevChunkIds": []
+      },
+      "337": {
+        "chunkId": "aa65b1",
+        "hash": "6f4aa659",
+        "encoded": "result%20=%20_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "338": {
+        "chunkId": "aa65b1",
+        "hash": "064ae127",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "339": {
+        "chunkId": "aa65b1",
+        "hash": "ba373050",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22%5D,",
+        "prevChunkIds": []
+      },
+      "340": {
+        "chunkId": "aa65b1",
+        "hash": "53cf53c7",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22%5D,",
+        "prevChunkIds": []
+      },
+      "341": {
+        "chunkId": "aa65b1",
+        "hash": "11cfa22a",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "342": {
+        "chunkId": "aa65b1",
+        "hash": "e9b1576d",
+        "encoded": "self.assertEqual(result,%20expected)",
+        "prevChunkIds": []
+      },
+      "343": {
+        "chunkId": "aa65b1",
+        "hash": "18a8d7cf",
+        "encoded": "self.assertEqual(fn.call_count,%202)",
+        "prevChunkIds": []
+      },
+      "345": {
+        "chunkId": "aa65b1",
+        "hash": "1cfa41b2",
+        "encoded": "#%20------------------------------------------------------------------",
+        "prevChunkIds": []
+      },
+      "346": {
+        "chunkId": "aa65b1",
+        "hash": "a730e94f",
+        "encoded": "#%20Key%20slot%20logging%20verification",
+        "prevChunkIds": []
+      },
+      "347": {
+        "chunkId": "aa65b1",
+        "hash": "4495eba6",
+        "encoded": "#%20------------------------------------------------------------------",
+        "prevChunkIds": []
+      },
+      "349": {
+        "chunkId": "aa65b1",
+        "hash": "e272dece",
+        "encoded": "def%20test_primary_slot_logged_on_attempt(self):",
+        "prevChunkIds": []
+      },
+      "350": {
+        "chunkId": "aa65b1",
+        "hash": "f88da5ed",
+        "encoded": "%22%22%22%5BMistral%5D%20Attempting%20request%20with%20PRIMARY%20key%20is%20printed%20on%20first%20attempt.%22%22%22",
+        "prevChunkIds": []
+      },
+      "351": {
+        "chunkId": "aa65b1",
+        "hash": "b381d97b",
+        "encoded": "fn%20=%20self._make_fn(%5B%7B%22result%22:%20%22ok%22%7D%5D)",
+        "prevChunkIds": []
+      },
+      "352": {
+        "chunkId": "aa65b1",
+        "hash": "eec19e3f",
+        "encoded": "with%20patch(%22sys.stdout%22,%20new_callable=StringIO)%20as%20mock_stdout:",
+        "prevChunkIds": []
+      },
+      "353": {
+        "chunkId": "aa65b1",
+        "hash": "c4c7d1c3",
+        "encoded": "_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "354": {
+        "chunkId": "aa65b1",
+        "hash": "e880c2a9",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "355": {
+        "chunkId": "aa65b1",
+        "hash": "5df5b81c",
+        "encoded": "api_keys=%5B%22key-primary%22%5D,",
+        "prevChunkIds": []
+      },
+      "356": {
+        "chunkId": "aa65b1",
+        "hash": "9cc3d2fd",
+        "encoded": "key_labels=%5B%22primary%22%5D,",
+        "prevChunkIds": []
+      },
+      "357": {
+        "chunkId": "aa65b1",
+        "hash": "25b76f6b",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "358": {
+        "chunkId": "aa65b1",
+        "hash": "424db255",
+        "encoded": "output%20=%20mock_stdout.getvalue()",
+        "prevChunkIds": []
+      },
+      "359": {
+        "chunkId": "aa65b1",
+        "hash": "09edef18",
+        "encoded": "self.assertIn(%22%5BMistral%5D%20Attempting%20request%20with%20PRIMARY%20key%22,%20output)",
+        "prevChunkIds": []
+      },
+      "361": {
+        "chunkId": "aa65b1",
+        "hash": "9a311e2f",
+        "encoded": "def%20test_secondary_slot_logged_after_primary_429(self):",
+        "prevChunkIds": []
+      },
+      "362": {
+        "chunkId": "aa65b1",
+        "hash": "41004445",
+        "encoded": "%22%22%22After%20primary%20429,%20logs%20show%20rotation%20to%20SECONDARY%20and%20attempt%20with%20SECONDARY.%22%22%22",
+        "prevChunkIds": []
+      },
+      "363": {
+        "chunkId": "aa65b1",
+        "hash": "80289480",
+        "encoded": "fn%20=%20self._make_fn(%5B_RateLimitError(%22rate%20limited%22),%20%7B%22result%22:%20%22ok%22%7D%5D)",
+        "prevChunkIds": []
+      },
+      "364": {
+        "chunkId": "aa65b1",
+        "hash": "2102ed1a",
+        "encoded": "with%20patch(%22sys.stdout%22,%20new_callable=StringIO)%20as%20mock_stdout:",
+        "prevChunkIds": []
+      },
+      "365": {
+        "chunkId": "aa65b1",
+        "hash": "e5be689c",
+        "encoded": "_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "366": {
+        "chunkId": "aa65b1",
+        "hash": "23336fe1",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "367": {
+        "chunkId": "aa65b1",
+        "hash": "216f8400",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22%5D,",
+        "prevChunkIds": []
+      },
+      "368": {
+        "chunkId": "aa65b1",
+        "hash": "1eddc4ef",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22%5D,",
+        "prevChunkIds": []
+      },
+      "369": {
+        "chunkId": "aa65b1",
+        "hash": "f1c0803d",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "370": {
+        "chunkId": "aa65b1",
+        "hash": "a16d7e17",
+        "encoded": "output%20=%20mock_stdout.getvalue()",
+        "prevChunkIds": []
+      },
+      "371": {
+        "chunkId": "aa65b1",
+        "hash": "4230ba1a",
+        "encoded": "self.assertIn(%22%5BMistral%5D%20Attempting%20request%20with%20PRIMARY%20key%22,%20output)",
+        "prevChunkIds": []
+      },
+      "372": {
+        "chunkId": "aa65b1",
+        "hash": "3ef8f876",
+        "encoded": "self.assertIn(%22PRIMARY%20key%20hit%20429%20rate%20limit%22,%20output)",
+        "prevChunkIds": []
+      },
+      "373": {
+        "chunkId": "aa65b1",
+        "hash": "cb813f30",
+        "encoded": "self.assertIn(%22Rotating%20to%20SECONDARY%20key%22,%20output)",
+        "prevChunkIds": []
+      },
+      "374": {
+        "chunkId": "aa65b1",
+        "hash": "09bf4abf",
+        "encoded": "self.assertIn(%22%5BMistral%5D%20Attempting%20request%20with%20SECONDARY%20key%22,%20output)",
+        "prevChunkIds": []
+      },
+      "376": {
+        "chunkId": "aa65b1",
+        "hash": "0268aa82",
+        "encoded": "def%20test_tertiary_slot_logged_after_secondary_429(self):",
+        "prevChunkIds": []
+      },
+      "377": {
+        "chunkId": "aa65b1",
+        "hash": "3e31510c",
+        "encoded": "%22%22%22After%20primary%20and%20secondary%20429,%20logs%20show%20rotation%20to%20TERTIARY.%22%22%22",
+        "prevChunkIds": []
+      },
+      "378": {
+        "chunkId": "aa65b1",
+        "hash": "666da576",
+        "encoded": "fn%20=%20self._make_fn(",
+        "prevChunkIds": []
+      },
+      "379": {
+        "chunkId": "aa65b1",
+        "hash": "4abddcb8",
+        "encoded": "%5B_RateLimitError(%22rate%20limited%22),%20_RateLimitError(%22rate%20limited%22),%20%7B%22result%22:%20%22ok%22%7D%5D",
+        "prevChunkIds": []
+      },
+      "380": {
+        "chunkId": "aa65b1",
+        "hash": "a14a2614",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "381": {
+        "chunkId": "aa65b1",
+        "hash": "76947771",
+        "encoded": "with%20patch(%22sys.stdout%22,%20new_callable=StringIO)%20as%20mock_stdout:",
+        "prevChunkIds": []
+      },
+      "382": {
+        "chunkId": "aa65b1",
+        "hash": "786a044a",
+        "encoded": "_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "383": {
+        "chunkId": "aa65b1",
+        "hash": "a4c79cb4",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "384": {
+        "chunkId": "aa65b1",
+        "hash": "d9f72670",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22,%20%22key-tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "385": {
+        "chunkId": "aa65b1",
+        "hash": "9844423b",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22,%20%22tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "386": {
+        "chunkId": "aa65b1",
+        "hash": "2118f314",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "387": {
+        "chunkId": "aa65b1",
+        "hash": "800e6512",
+        "encoded": "output%20=%20mock_stdout.getvalue()",
+        "prevChunkIds": []
+      },
+      "388": {
+        "chunkId": "aa65b1",
+        "hash": "5d46ece5",
+        "encoded": "self.assertIn(%22%5BMistral%5D%20Attempting%20request%20with%20TERTIARY%20key%22,%20output)",
+        "prevChunkIds": []
+      },
+      "389": {
+        "chunkId": "aa65b1",
+        "hash": "e1ca51fd",
+        "encoded": "self.assertIn(%22Rotating%20to%20TERTIARY%20key%22,%20output)",
+        "prevChunkIds": []
+      },
+      "391": {
+        "chunkId": "aa65b1",
+        "hash": "98a20d06",
+        "encoded": "def%20test_all_keys_exhausted_logged(self):",
+        "prevChunkIds": []
+      },
+      "392": {
+        "chunkId": "aa65b1",
+        "hash": "93f55915",
+        "encoded": "%22%22%22When%20all%20keys%20are%20exhausted,%20the%20exhaustion%20message%20is%20printed.%22%22%22",
+        "prevChunkIds": []
+      },
+      "393": {
+        "chunkId": "aa65b1",
+        "hash": "da2cbfd8",
+        "encoded": "fn%20=%20self._make_fn(",
+        "prevChunkIds": []
+      },
+      "394": {
+        "chunkId": "aa65b1",
+        "hash": "2fb516b8",
+        "encoded": "%5B",
+        "prevChunkIds": []
+      },
+      "395": {
+        "chunkId": "aa65b1",
+        "hash": "87650209",
+        "encoded": "_RateLimitError(%22rate%20limited%22),",
+        "prevChunkIds": []
+      },
+      "396": {
+        "chunkId": "aa65b1",
+        "hash": "206cd80a",
+        "encoded": "_RateLimitError(%22rate%20limited%22),",
+        "prevChunkIds": []
+      },
+      "397": {
+        "chunkId": "aa65b1",
+        "hash": "ca970576",
+        "encoded": "_RateLimitError(%22rate%20limited%22),",
+        "prevChunkIds": []
+      },
+      "398": {
+        "chunkId": "aa65b1",
+        "hash": "ef1984c9",
+        "encoded": "%5D",
+        "prevChunkIds": []
+      },
+      "399": {
+        "chunkId": "aa65b1",
+        "hash": "dbd11959",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "400": {
+        "chunkId": "aa65b1",
+        "hash": "42de3beb",
+        "encoded": "with%20patch(%22sys.stdout%22,%20new_callable=StringIO)%20as%20mock_stdout:",
+        "prevChunkIds": []
+      },
+      "401": {
+        "chunkId": "aa65b1",
+        "hash": "e7cffeac",
+        "encoded": "with%20self.assertRaises(LLMConfigurationError):",
+        "prevChunkIds": []
+      },
+      "402": {
+        "chunkId": "aa65b1",
+        "hash": "2a728102",
+        "encoded": "_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "403": {
+        "chunkId": "aa65b1",
+        "hash": "bfcb929b",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "404": {
+        "chunkId": "aa65b1",
+        "hash": "8adac0e0",
+        "encoded": "api_keys=%5B%22key-primary%22,%20%22key-secondary%22,%20%22key-tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "405": {
+        "chunkId": "aa65b1",
+        "hash": "eec61bc0",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22,%20%22tertiary%22%5D,",
+        "prevChunkIds": []
+      },
+      "406": {
+        "chunkId": "aa65b1",
+        "hash": "5939df5b",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "407": {
+        "chunkId": "aa65b1",
+        "hash": "aaa2c16b",
+        "encoded": "output%20=%20mock_stdout.getvalue()",
+        "prevChunkIds": []
+      },
+      "408": {
+        "chunkId": "aa65b1",
+        "hash": "9493dbf4",
+        "encoded": "self.assertIn(%22All%20API%20keys%20exhausted%22,%20output)",
+        "prevChunkIds": []
+      },
+      "410": {
+        "chunkId": "aa65b1",
+        "hash": "2a1c44a0",
+        "encoded": "def%20test_no_api_key_values_in_logs(self):",
+        "prevChunkIds": []
+      },
+      "411": {
+        "chunkId": "aa65b1",
+        "hash": "db8bcbf7",
+        "encoded": "%22%22%22Actual%20API%20key%20values%20must%20NEVER%20appear%20in%20the%20printed%20output.%22%22%22",
+        "prevChunkIds": []
+      },
+      "412": {
+        "chunkId": "aa65b1",
+        "hash": "016bf59f",
+        "encoded": "fn%20=%20self._make_fn(%5B_RateLimitError(%22rate%20limited%22),%20%7B%22result%22:%20%22ok%22%7D%5D)",
+        "prevChunkIds": []
+      },
+      "413": {
+        "chunkId": "aa65b1",
+        "hash": "0e76a75f",
+        "encoded": "with%20patch(%22sys.stdout%22,%20new_callable=StringIO)%20as%20mock_stdout:",
+        "prevChunkIds": []
+      },
+      "414": {
+        "chunkId": "aa65b1",
+        "hash": "cb7a2094",
+        "encoded": "_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "415": {
+        "chunkId": "aa65b1",
+        "hash": "5e3029c9",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "416": {
+        "chunkId": "aa65b1",
+        "hash": "949b1ca3",
+        "encoded": "api_keys=%5B%22secret-key-abc123%22,%20%22secret-key-xyz789%22%5D,",
+        "prevChunkIds": []
+      },
+      "417": {
+        "chunkId": "aa65b1",
+        "hash": "f6c5c9b9",
+        "encoded": "key_labels=%5B%22primary%22,%20%22secondary%22%5D,",
+        "prevChunkIds": []
+      },
+      "418": {
+        "chunkId": "aa65b1",
+        "hash": "3261e442",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "419": {
+        "chunkId": "aa65b1",
+        "hash": "b0a858ad",
+        "encoded": "output%20=%20mock_stdout.getvalue()",
+        "prevChunkIds": []
+      },
+      "420": {
+        "chunkId": "aa65b1",
+        "hash": "dc8d35ea",
+        "encoded": "self.assertNotIn(%22secret-key-abc123%22,%20output)",
+        "prevChunkIds": []
+      },
+      "421": {
+        "chunkId": "aa65b1",
+        "hash": "11bc7915",
+        "encoded": "self.assertNotIn(%22secret-key-xyz789%22,%20output)",
+        "prevChunkIds": []
+      },
+      "423": {
+        "chunkId": "aa65b1",
+        "hash": "650acf98",
+        "encoded": "def%20test_success_logged_after_attempt(self):",
+        "prevChunkIds": []
+      },
+      "424": {
+        "chunkId": "aa65b1",
+        "hash": "ad345417",
+        "encoded": "%22%22%22Success%20message%20is%20printed%20after%20a%20successful%20key%20attempt.%22%22%22",
+        "prevChunkIds": []
+      },
+      "425": {
+        "chunkId": "aa65b1",
+        "hash": "57e92b8e",
+        "encoded": "fn%20=%20self._make_fn(%5B%7B%22result%22:%20%22ok%22%7D%5D)",
+        "prevChunkIds": []
+      },
+      "426": {
+        "chunkId": "aa65b1",
+        "hash": "9b8d71ef",
+        "encoded": "with%20patch(%22sys.stdout%22,%20new_callable=StringIO)%20as%20mock_stdout:",
+        "prevChunkIds": []
+      },
+      "427": {
+        "chunkId": "aa65b1",
+        "hash": "3c97fab0",
+        "encoded": "_call_mistral_with_fallback(",
+        "prevChunkIds": []
+      },
+      "428": {
+        "chunkId": "aa65b1",
+        "hash": "4cd52f91",
+        "encoded": "fn,",
+        "prevChunkIds": []
+      },
+      "429": {
+        "chunkId": "aa65b1",
+        "hash": "74429dbc",
+        "encoded": "api_keys=%5B%22key-primary%22%5D,",
+        "prevChunkIds": []
+      },
+      "430": {
+        "chunkId": "aa65b1",
+        "hash": "778d8c4b",
+        "encoded": "key_labels=%5B%22primary%22%5D,",
+        "prevChunkIds": []
+      },
+      "431": {
+        "chunkId": "aa65b1",
+        "hash": "b1b97b03",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "432": {
+        "chunkId": "aa65b1",
+        "hash": "7483078b",
+        "encoded": "output%20=%20mock_stdout.getvalue()",
+        "prevChunkIds": []
+      },
+      "433": {
+        "chunkId": "aa65b1",
+        "hash": "e2e6aa73",
+        "encoded": "self.assertIn(%22PRIMARY%20key%20succeeded%22,%20output)",
+        "prevChunkIds": []
+      },
+      "435": {
+        "chunkId": "aa65b1",
+        "hash": "adcdba03",
+        "encoded": "#%20------------------------------------------------------------------",
+        "prevChunkIds": []
+      },
+      "436": {
+        "chunkId": "aa65b1",
+        "hash": "7e5ee9aa",
+        "encoded": "#%20Backward-compatibility:%20existing%20test%20method%20names%20preserved",
+        "prevChunkIds": []
+      },
+      "437": {
+        "chunkId": "aa65b1",
+        "hash": "313cacaf",
+        "encoded": "#%20------------------------------------------------------------------",
+        "prevChunkIds": []
+      },
+      "439": {
+        "chunkId": "aa65b1",
+        "hash": "f5a5ed56",
+        "encoded": "def%20test_mistral_fallback_uses_primary_on_success(self):",
+        "prevChunkIds": []
+      },
+      "440": {
+        "chunkId": "aa65b1",
+        "hash": "b005288e",
+        "encoded": "%22%22%22Alias:%20Primary%20key%20works;%20secondary%20and%20tertiary%20are%20never%20called.%22%22%22",
+        "prevChunkIds": []
+      },
+      "441": {
+        "chunkId": "aa65b1",
+        "hash": "3a11f09f",
+        "encoded": "self.test_primary_key_success_no_rotation()",
+        "prevChunkIds": []
+      },
+      "443": {
+        "chunkId": "aa65b1",
+        "hash": "bfa5f696",
+        "encoded": "def%20test_mistral_fallback_uses_secondary_on_primary_429(self):",
+        "prevChunkIds": []
+      },
+      "444": {
+        "chunkId": "aa65b1",
+        "hash": "d7bc3ac3",
+        "encoded": "%22%22%22Alias:%20Primary%20returns%20429;%20secondary%20succeeds;%20tertiary%20never%20called.%22%22%22",
+        "prevChunkIds": []
+      },
+      "445": {
+        "chunkId": "aa65b1",
+        "hash": "4ffd86b2",
+        "encoded": "self.test_primary_429_rotates_to_secondary()",
+        "prevChunkIds": []
+      },
+      "447": {
+        "chunkId": "aa65b1",
+        "hash": "72d20894",
+        "encoded": "def%20test_mistral_fallback_uses_tertiary_on_secondary_429(self):",
+        "prevChunkIds": []
+      },
+      "448": {
+        "chunkId": "aa65b1",
+        "hash": "e23cb648",
+        "encoded": "%22%22%22Alias:%20Primary%20and%20secondary%20return%20429;%20tertiary%20succeeds.%22%22%22",
+        "prevChunkIds": []
+      },
+      "449": {
+        "chunkId": "aa65b1",
+        "hash": "d79c3cf3",
+        "encoded": "self.test_primary_and_secondary_429_rotates_to_tertiary()",
+        "prevChunkIds": []
+      },
+      "451": {
+        "chunkId": "aa65b1",
+        "hash": "c13131f6",
+        "encoded": "def%20test_mistral_fallback_raises_on_all_429(self):",
+        "prevChunkIds": []
+      },
+      "452": {
+        "chunkId": "aa65b1",
+        "hash": "710fa908",
+        "encoded": "%22%22%22Alias:%20All%20three%20keys%20return%20429;%20raises%20LLMConfigurationError.%22%22%22",
+        "prevChunkIds": []
+      },
+      "453": {
+        "chunkId": "aa65b1",
+        "hash": "1129e7a0",
+        "encoded": "self.test_all_keys_429_raises_configuration_error()",
+        "prevChunkIds": []
+      },
+      "455": {
+        "chunkId": "aa65b1",
+        "hash": "134d07e8",
+        "encoded": "def%20test_mistral_fallback_no_rotation_on_non_429(self):",
+        "prevChunkIds": []
+      },
+      "456": {
+        "chunkId": "aa65b1",
+        "hash": "ae06da9e",
+        "encoded": "%22%22%22Alias:%20Primary%20returns%20a%20non-429%20error;%20raises%20immediately%20without%20trying%20secondary.%22%22%22",
+        "prevChunkIds": []
+      },
+      "457": {
+        "chunkId": "aa65b1",
+        "hash": "48ccb8cc",
+        "encoded": "self.test_non_429_error_does_not_rotate()",
+        "prevChunkIds": []
+      },
+      "459": {
+        "chunkId": "aa65b1",
+        "hash": "ed455f9e",
+        "encoded": "def%20test_mistral_fallback_raises_when_no_keys(self):",
+        "prevChunkIds": []
+      },
+      "460": {
+        "chunkId": "aa65b1",
+        "hash": "ccab4bef",
+        "encoded": "%22%22%22Alias:%20Empty%20key%20list%20raises%20LLMConfigurationError%20immediately.%22%22%22",
+        "prevChunkIds": []
+      },
+      "461": {
+        "chunkId": "aa65b1",
+        "hash": "8a799aef",
+        "encoded": "self.test_empty_key_list_raises_immediately()",
+        "prevChunkIds": []
+      },
+      "464": {
+        "chunkId": "aa65b1",
+        "hash": "d00f2c7c",
+        "encoded": "if%20__name__%20==%20%22__main__%22:",
+        "prevChunkIds": []
+      },
+      "465": {
+        "chunkId": "aa65b1",
+        "hash": "9436487c",
+        "encoded": "unittest.main()",
+        "prevChunkIds": []
+      }
+    }
+  }
+}

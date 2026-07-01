@@ -96,22 +96,63 @@ def _call_mistral_with_fallback(
         raise LLMConfigurationError("No Mistral API keys configured.")
 
     last_error: Exception | None = None
-    for key, label in zip(api_keys, key_labels):
-        logger.info("Trying Mistral key slot: %s", label)
+    for idx, (key, label) in enumerate(zip(api_keys, key_labels)):
+        upper_label = label.upper()
+        print(f"[Mistral] Attempting request with {upper_label} key", flush=True)
+        logger.info("[Mistral] Attempting request with %s key", upper_label)
         try:
-            return make_request_fn(key)
+            result = make_request_fn(key)
+            print(f"[Mistral] {upper_label} key succeeded", flush=True)
+            logger.info("[Mistral] %s key succeeded", upper_label)
+            return result
         except Exception as exc:  # noqa: BLE001
             # Only rotate to the next key on rate-limit (429) errors.
             if _is_rate_limit_error(exc):
-                logger.warning(
-                    "Mistral key slot %s hit rate limit (429); trying next key.", label
-                )
+                # Determine the next key label for the log message.
+                next_labels = key_labels[idx + 1 :]
+                if next_labels:
+                    next_label = next_labels[0].upper()
+                    print(
+                        f"[Mistral] {upper_label} key hit 429 rate limit. "
+                        f"Rotating to {next_label} key...",
+                        flush=True,
+                    )
+                    logger.warning(
+                        "[Mistral] %s key hit 429 rate limit. Rotating to %s key.",
+                        upper_label,
+                        next_label,
+                    )
+                else:
+                    print(
+                        f"[Mistral] {upper_label} key hit 429 rate limit. "
+                        "No more keys to try.",
+                        flush=True,
+                    )
+                    logger.warning(
+                        "[Mistral] %s key hit 429 rate limit. No more keys to try.",
+                        upper_label,
+                    )
                 last_error = exc
                 continue
             # All other errors (auth, validation, server errors) propagate immediately.
+            print(
+                f"[Mistral] {upper_label} key raised a non-429 error ({type(exc).__name__}); "
+                "not rotating.",
+                flush=True,
+            )
+            logger.error(
+                "[Mistral] %s key raised non-429 error (%s); propagating immediately.",
+                upper_label,
+                type(exc).__name__,
+            )
             raise
 
     # All keys exhausted with 429 errors.
+    print(
+        "[Mistral] All API keys exhausted due to rate limiting (429). "
+        "Please wait before retrying or add more API keys.",
+        flush=True,
+    )
     raise LLMConfigurationError(
         "All Mistral API keys exhausted due to rate limiting (429). "
         "Please wait before retrying or add more API keys."
@@ -119,21 +160,52 @@ def _call_mistral_with_fallback(
 
 
 def _is_rate_limit_error(exc: Exception) -> bool:
-    """Return True if *exc* represents an HTTP 429 / rate-limit error."""
-    # Check for httpx / requests HTTP status code attributes.
-    status_code = getattr(exc, "status_code", None) or getattr(
-        getattr(exc, "response", None), "status_code", None
-    )
+    """Return True if *exc* represents an HTTP 429 / rate-limit error.
+
+    Handles the exact Mistral error format:
+        {'object': 'error', 'message': 'Rate limit exceeded', 'type': 'rate_limited',
+         'param': None, 'code': '1300', 'raw_status_code': 429}
+    as well as standard OpenAI SDK RateLimitError and httpx status codes.
+    """
+    # 1. Direct status_code attribute (openai.RateLimitError, httpx.HTTPStatusError, etc.)
+    status_code = getattr(exc, "status_code", None)
     if status_code == 429:
         return True
-    # Some SDKs expose the error type or code as a string.
+
+    # 2. Nested response.status_code (e.g. httpx.HTTPStatusError)
+    response = getattr(exc, "response", None)
+    if response is not None:
+        resp_status = getattr(response, "status_code", None)
+        if resp_status == 429:
+            return True
+
+    # 3. Mistral-specific: 'raw_status_code' in the error body dict.
+    #    The OpenAI SDK wraps the body in exc.body (a dict) for APIStatusError subclasses.
+    body = getattr(exc, "body", None)
+    if isinstance(body, dict):
+        if body.get("raw_status_code") == 429:
+            return True
+        # Also check 'code': '1300' which Mistral uses for rate-limit errors.
+        if str(body.get("code", "")) == "1300":
+            return True
+        # Mistral error type 'rate_limited'
+        err_type_body = str(body.get("type", "") or "").lower()
+        if "rate_limit" in err_type_body or err_type_body == "rate_limited":
+            return True
+
+    # 4. Top-level 'type' attribute (some SDK versions expose this directly).
     err_type = str(getattr(exc, "type", "") or "").lower()
-    err_code = str(getattr(exc, "code", "") or "")
-    if "rate_limit" in err_type or err_code == "1300":
+    if "rate_limit" in err_type or err_type == "rate_limited":
         return True
-    # Fallback: check the string representation for common rate-limit signals.
+
+    # 5. Top-level 'code' attribute: Mistral uses code='1300' for rate limiting.
+    err_code = str(getattr(exc, "code", "") or "")
+    if err_code == "1300":
+        return True
+
+    # 6. Fallback: inspect the string representation for common rate-limit signals.
     msg = str(exc).lower()
-    return "429" in msg or "rate limit" in msg or "rate_limit" in msg
+    return "429" in msg or "rate limit" in msg or "rate_limit" in msg or "rate_limited" in msg
 
 
 def load_llm_config() -> LLMProviderConfig:

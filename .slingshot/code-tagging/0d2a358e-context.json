@@ -1,0 +1,31 @@
+{
+  "filename": "test_llm_provider.py",
+  "path": "tests\\test_llm_provider.py",
+  "version": "1.1",
+  "files": {
+    "a8451636": {
+      "value": [
+        {
+          "programming_language": "",
+          "fileName": ".env",
+          "relativeFilePath": ".env",
+          "startLine": [
+            1
+          ],
+          "endLine": [
+            35
+          ]
+        }
+      ]
+    }
+  },
+  "promptMessage": {
+    "562a786d": {
+      "value": "@Workspace I am seeing a lot of Error code: 429 - {'object': 'error', 'message': 'Rate limit exceeded', 'type': 'rate_limited', 'param': None, 'code': '1300', 'raw_status_code': 429}\n\ncheck if the the keys are being rotated on 429, also print in the message log if it`s primary secondary or tertiary"
+    }
+  },
+  "localPrompts": {},
+  "remotePrompts": {},
+  "figma": {},
+  "jira": {}
+}

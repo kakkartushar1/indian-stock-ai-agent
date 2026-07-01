@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "lastUpdated": "2026-07-01T07:56:40.491Z",
+  "lastUpdated": "2026-07-01T08:25:03.644Z",
   "user_memory": [],
   "slingshot_memory": [
     {
@@ -15,6 +15,20 @@
       "content": "Project has a fallback helper _call_mistral_with_fallback in llm_provider.py that rotates MISTRAL_API_KEY_PRIMARY/SECONDARY/TERTIARY on 429 errors only.",
       "createdAt": "2026-07-01T07:56:40.491Z",
       "updatedAt": "2026-07-01T07:56:40.491Z",
+      "isEnabled": true
+    },
+    {
+      "id": "mem_1782894303639_g2c20y",
+      "content": "Indian stock AI agent: _is_rate_limit_error in llm_provider.py handles Mistral's exact error body format: {raw_status_code: 429, type: 'rate_limited', code: '1300'} via exc.body dict inspection.",
+      "createdAt": "2026-07-01T08:25:03.639Z",
+      "updatedAt": "2026-07-01T08:25:03.639Z",
+      "isEnabled": true
+    },
+    {
+      "id": "mem_1782894303644_fzq8gb",
+      "content": "Indian stock AI agent: _call_mistral_with_fallback uses print() with flush=True AND logger for key slot logging; format: '[Mistral] Attempting request with PRIMARY key'.",
+      "createdAt": "2026-07-01T08:25:03.644Z",
+      "updatedAt": "2026-07-01T08:25:03.644Z",
       "isEnabled": true
     }
   ]
