@@ -1,0 +1,1377 @@
+{
+  "agents\\pipeline_orchestrator.py": {
+    "filename": "pipeline_orchestrator.py",
+    "path": "agents\\pipeline_orchestrator.py",
+    "version": "1.2",
+    "contextFile": null,
+    "chunks": {
+      "dc635a": {
+        "user": "Tushar Kakkar",
+        "model": "claude-sonnet-4-6",
+        "timestamp": 1782989975,
+        "platform": "VisualStudioCode",
+        "product": "AIPP",
+        "productVersion": "2.6.1",
+        "source": "agent",
+        "type": "agentEditTool",
+        "extraContext": {
+          "promptMessage": "c8e442ba",
+          "files": "808b6ca9"
+        },
+        "hash": "e51723a0",
+        "messageId": "system_dca415c0-75fe-11f1-abb9-594ad5a3a74c",
+        "codeBlockId": null,
+        "isActive": true,
+        "hoverData": "\n### Slingshot Generated Code\n\n- **user**: Tushar Kakkar\n- **model**: claude-sonnet-4-6\n- **timestamp**: 7/2/2026, 4:29:35 PM\n- **source**: agent\n- **type**: agentEditTool\n"
+      },
+      "4ca1c5": {
+        "user": "Tushar Kakkar",
+        "model": "claude-sonnet-4-6",
+        "timestamp": 1782989975,
+        "platform": "VisualStudioCode",
+        "product": "AIPP",
+        "productVersion": "2.6.1",
+        "source": "agent",
+        "type": "agentEditTool",
+        "extraContext": {
+          "promptMessage": "c8e442ba",
+          "files": "808b6ca9"
+        },
+        "hash": "9195db75",
+        "messageId": "system_dca415c0-75fe-11f1-abb9-594ad5a3a74c",
+        "codeBlockId": null,
+        "isActive": true,
+        "hoverData": "\n### Slingshot Generated Code\n\n- **user**: Tushar Kakkar\n- **model**: claude-sonnet-4-6\n- **timestamp**: 7/2/2026, 4:29:35 PM\n- **source**: agent\n- **type**: agentEditTool\n"
+      },
+      "393ea3": {
+        "user": "Tushar Kakkar",
+        "model": "claude-sonnet-4-6",
+        "timestamp": 1782989975,
+        "platform": "VisualStudioCode",
+        "product": "AIPP",
+        "productVersion": "2.6.1",
+        "source": "agent",
+        "type": "agentEditTool",
+        "extraContext": {
+          "promptMessage": "c8e442ba",
+          "files": "808b6ca9"
+        },
+        "hash": "955d670c",
+        "messageId": "system_dca415c0-75fe-11f1-abb9-594ad5a3a74c",
+        "codeBlockId": null,
+        "isActive": true,
+        "hoverData": "\n### Slingshot Generated Code\n\n- **user**: Tushar Kakkar\n- **model**: claude-sonnet-4-6\n- **timestamp**: 7/2/2026, 4:29:35 PM\n- **source**: agent\n- **type**: agentEditTool\n"
+      }
+    },
+    "lines": {
+      "12": {
+        "chunkId": "393ea3",
+        "hash": "1632c868",
+        "encoded": "import%20asyncio",
+        "prevChunkIds": []
+      },
+      "13": {
+        "chunkId": "393ea3",
+        "hash": "eb1e8a4f",
+        "encoded": "import%20os",
+        "prevChunkIds": []
+      },
+      "14": {
+        "chunkId": "393ea3",
+        "hash": "e0f4e8d2",
+        "encoded": "import%20yfinance%20as%20yf",
+        "prevChunkIds": []
+      },
+      "15": {
+        "chunkId": "393ea3",
+        "hash": "f65f3716",
+        "encoded": "import%20json",
+        "prevChunkIds": []
+      },
+      "16": {
+        "chunkId": "393ea3",
+        "hash": "61f02eac",
+        "encoded": "from%20datetime%20import%20datetime",
+        "prevChunkIds": []
+      },
+      "17": {
+        "chunkId": "393ea3",
+        "hash": "a966027f",
+        "encoded": "from%20typing%20import%20Callable,%20Optional",
+        "prevChunkIds": []
+      },
+      "18": {
+        "chunkId": "393ea3",
+        "hash": "2c038ba1",
+        "encoded": "from%20pathlib%20import%20Path",
+        "prevChunkIds": []
+      },
+      "19": {
+        "chunkId": "393ea3",
+        "hash": "bb3b584c",
+        "encoded": "from%20openai_sdk%20import%20Agent,%20Runner,%20ModelSettings",
+        "prevChunkIds": []
+      },
+      "546": {
+        "chunkId": "4ca1c5",
+        "hash": "cc91d86e",
+        "encoded": "================================================================================",
+        "prevChunkIds": []
+      },
+      "547": {
+        "chunkId": "4ca1c5",
+        "hash": "d897e36a",
+        "encoded": "RISK%20ASSESSMENT",
+        "prevChunkIds": []
+      },
+      "548": {
+        "chunkId": "4ca1c5",
+        "hash": "eb7e4bd6",
+        "encoded": "================================================================================",
+        "prevChunkIds": []
+      },
+      "549": {
+        "chunkId": "4ca1c5",
+        "hash": "c784b5c5",
+        "encoded": "%7Bresults%5B'risk_assessment'%5D%7D",
+        "prevChunkIds": []
+      },
+      "551": {
+        "chunkId": "4ca1c5",
+        "hash": "c80b5d3b",
+        "encoded": "================================================================================",
+        "prevChunkIds": []
+      },
+      "552": {
+        "chunkId": "4ca1c5",
+        "hash": "f41ccf4b",
+        "encoded": "%22%22%22",
+        "prevChunkIds": []
+      },
+      "553": {
+        "chunkId": "4ca1c5",
+        "hash": "4e7465e4",
+        "encoded": "return%20report",
+        "prevChunkIds": []
+      },
+      "556": {
+        "chunkId": "4ca1c5",
+        "hash": "89651a33",
+        "encoded": "def%20generate_markdown_report(results:%20dict,%20raw_data:%20dict%20%7C%20None%20=%20None)%20-%3E%20str:",
+        "prevChunkIds": []
+      },
+      "557": {
+        "chunkId": "4ca1c5",
+        "hash": "0deb8c47",
+        "encoded": "%22%22%22",
+        "prevChunkIds": []
+      },
+      "558": {
+        "chunkId": "4ca1c5",
+        "hash": "f41a19e8",
+        "encoded": "Generate%20a%20well-formatted%20Markdown%20report%20from%20analysis%20results.",
+        "prevChunkIds": []
+      },
+      "560": {
+        "chunkId": "4ca1c5",
+        "hash": "0521c416",
+        "encoded": "This%20captures%20all%20intermediate%20analysis%20results%20from%20each%20agent%20and%20formats",
+        "prevChunkIds": []
+      },
+      "561": {
+        "chunkId": "4ca1c5",
+        "hash": "7ef52b80",
+        "encoded": "them%20as%20a%20structured%20Markdown%20document%20suitable%20for%20saving%20as%20a%20.md%20file.",
+        "prevChunkIds": []
+      },
+      "563": {
+        "chunkId": "4ca1c5",
+        "hash": "6107bd0c",
+        "encoded": "Args:",
+        "prevChunkIds": []
+      },
+      "564": {
+        "chunkId": "4ca1c5",
+        "hash": "11bc7d90",
+        "encoded": "results:%20Dictionary%20containing%20all%20analysis%20results%20from%20the%20pipeline",
+        "prevChunkIds": []
+      },
+      "565": {
+        "chunkId": "4ca1c5",
+        "hash": "3a2decf0",
+        "encoded": "raw_data:%20Optional%20raw%20stock%20data%20from%20yfinance%20for%20additional%20context",
+        "prevChunkIds": []
+      },
+      "567": {
+        "chunkId": "4ca1c5",
+        "hash": "b5539a6c",
+        "encoded": "Returns:",
+        "prevChunkIds": []
+      },
+      "568": {
+        "chunkId": "4ca1c5",
+        "hash": "f2ebc064",
+        "encoded": "Formatted%20Markdown%20string",
+        "prevChunkIds": []
+      },
+      "569": {
+        "chunkId": "4ca1c5",
+        "hash": "28734216",
+        "encoded": "%22%22%22",
+        "prevChunkIds": []
+      },
+      "570": {
+        "chunkId": "4ca1c5",
+        "hash": "913bc956",
+        "encoded": "stock_symbol%20=%20results.get(%22stock_symbol%22,%20%22UNKNOWN%22)",
+        "prevChunkIds": []
+      },
+      "571": {
+        "chunkId": "4ca1c5",
+        "hash": "d31f44de",
+        "encoded": "analysis_date%20=%20datetime.now().strftime(%22%25Y-%25m-%25d%20%25H:%25M:%25S%22)",
+        "prevChunkIds": []
+      },
+      "572": {
+        "chunkId": "4ca1c5",
+        "hash": "3bf7ff92",
+        "encoded": "agents_run%20=%20results.get(%22agents_run%22,%20%5B%5D)",
+        "prevChunkIds": []
+      },
+      "574": {
+        "chunkId": "4ca1c5",
+        "hash": "d16558fd",
+        "encoded": "#%20Build%20header%20section",
+        "prevChunkIds": []
+      },
+      "575": {
+        "chunkId": "4ca1c5",
+        "hash": "97a26ae7",
+        "encoded": "md_lines%20=%20%5B",
+        "prevChunkIds": []
+      },
+      "576": {
+        "chunkId": "4ca1c5",
+        "hash": "fe95a1d9",
+        "encoded": "f%22#%20Stock%20Analysis%20Report:%20%7Bstock_symbol%7D%22,",
+        "prevChunkIds": []
+      },
+      "577": {
+        "chunkId": "4ca1c5",
+        "hash": "155a2c9e",
+        "encoded": "f%22%22,",
+        "prevChunkIds": []
+      },
+      "578": {
+        "chunkId": "4ca1c5",
+        "hash": "44306230",
+        "encoded": "f%22**Analysis%20Date:**%20%7Banalysis_date%7D%20%20%22,",
+        "prevChunkIds": []
+      },
+      "579": {
+        "chunkId": "4ca1c5",
+        "hash": "1e8a65db",
+        "encoded": "f%22**Agents%20Participated:**%20%7Blen(agents_run)%7D/10%20%20%22,",
+        "prevChunkIds": []
+      },
+      "580": {
+        "chunkId": "4ca1c5",
+        "hash": "9ea6da2d",
+        "encoded": "f%22**Agents%20Run:**%20%7B',%20'.join(agents_run)%20if%20agents_run%20else%20'None'%7D%20%20%22,",
+        "prevChunkIds": []
+      },
+      "581": {
+        "chunkId": "4ca1c5",
+        "hash": "65e892d7",
+        "encoded": "f%22%22,",
+        "prevChunkIds": []
+      },
+      "582": {
+        "chunkId": "4ca1c5",
+        "hash": "8c4aa2a1",
+        "encoded": "f%22---%22,",
+        "prevChunkIds": []
+      },
+      "583": {
+        "chunkId": "4ca1c5",
+        "hash": "1bb65741",
+        "encoded": "f%22%22,",
+        "prevChunkIds": []
+      },
+      "584": {
+        "chunkId": "4ca1c5",
+        "hash": "f8de03a9",
+        "encoded": "%5D",
+        "prevChunkIds": []
+      },
+      "586": {
+        "chunkId": "4ca1c5",
+        "hash": "616e52a2",
+        "encoded": "#%20Add%20raw%20data%20summary%20if%20available",
+        "prevChunkIds": []
+      },
+      "587": {
+        "chunkId": "4ca1c5",
+        "hash": "59e78013",
+        "encoded": "if%20raw_data%20and%20isinstance(raw_data,%20dict):",
+        "prevChunkIds": []
+      },
+      "588": {
+        "chunkId": "4ca1c5",
+        "hash": "0316093e",
+        "encoded": "md_lines%20+=%20%5B",
+        "prevChunkIds": []
+      },
+      "589": {
+        "chunkId": "4ca1c5",
+        "hash": "efe3f7b8",
+        "encoded": "f%22##%20Market%20Data%20Snapshot%22,",
+        "prevChunkIds": []
+      },
+      "590": {
+        "chunkId": "4ca1c5",
+        "hash": "8a0336bd",
+        "encoded": "f%22%22,",
+        "prevChunkIds": []
+      },
+      "591": {
+        "chunkId": "4ca1c5",
+        "hash": "1d8c6181",
+        "encoded": "%5D",
+        "prevChunkIds": []
+      },
+      "592": {
+        "chunkId": "4ca1c5",
+        "hash": "9c7d13b4",
+        "encoded": "company_name%20=%20raw_data.get(%22company_name%22,%20stock_symbol)",
+        "prevChunkIds": []
+      },
+      "593": {
+        "chunkId": "4ca1c5",
+        "hash": "73ae6422",
+        "encoded": "current_price%20=%20raw_data.get(%22current_price%22)",
+        "prevChunkIds": []
+      },
+      "594": {
+        "chunkId": "4ca1c5",
+        "hash": "c2998150",
+        "encoded": "week_52_high%20=%20raw_data.get(%22week_52_high%22)",
+        "prevChunkIds": []
+      },
+      "595": {
+        "chunkId": "4ca1c5",
+        "hash": "98e826d9",
+        "encoded": "week_52_low%20=%20raw_data.get(%22week_52_low%22)",
+        "prevChunkIds": []
+      },
+      "596": {
+        "chunkId": "4ca1c5",
+        "hash": "53eeb32c",
+        "encoded": "day_change%20=%20raw_data.get(%22day_change%22)",
+        "prevChunkIds": []
+      },
+      "597": {
+        "chunkId": "4ca1c5",
+        "hash": "d247d122",
+        "encoded": "day_change_pct%20=%20raw_data.get(%22day_change_percent%22)",
+        "prevChunkIds": []
+      },
+      "598": {
+        "chunkId": "4ca1c5",
+        "hash": "6271c6d6",
+        "encoded": "pe_ratio%20=%20raw_data.get(%22pe_ratio%22)",
+        "prevChunkIds": []
+      },
+      "599": {
+        "chunkId": "4ca1c5",
+        "hash": "3f0ba081",
+        "encoded": "pb_ratio%20=%20raw_data.get(%22pb_ratio%22)",
+        "prevChunkIds": []
+      },
+      "600": {
+        "chunkId": "4ca1c5",
+        "hash": "a2af10e0",
+        "encoded": "market_cap%20=%20raw_data.get(%22market_cap%22)",
+        "prevChunkIds": []
+      },
+      "601": {
+        "chunkId": "4ca1c5",
+        "hash": "c32a57dd",
+        "encoded": "roe%20=%20raw_data.get(%22roe%22)",
+        "prevChunkIds": []
+      },
+      "602": {
+        "chunkId": "4ca1c5",
+        "hash": "8a8919e5",
+        "encoded": "div_yield%20=%20raw_data.get(%22dividend_yield%22)",
+        "prevChunkIds": []
+      },
+      "603": {
+        "chunkId": "4ca1c5",
+        "hash": "78c4aaa5",
+        "encoded": "sector%20=%20raw_data.get(%22sector%22,%20%22N/A%22)",
+        "prevChunkIds": []
+      },
+      "604": {
+        "chunkId": "4ca1c5",
+        "hash": "242ec705",
+        "encoded": "industry%20=%20raw_data.get(%22industry%22,%20%22N/A%22)",
+        "prevChunkIds": []
+      },
+      "606": {
+        "chunkId": "4ca1c5",
+        "hash": "b633e976",
+        "encoded": "md_lines%20+=%20%5B",
+        "prevChunkIds": []
+      },
+      "607": {
+        "chunkId": "4ca1c5",
+        "hash": "7cbce083",
+        "encoded": "f%22%7C%20Metric%20%7C%20Value%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "608": {
+        "chunkId": "4ca1c5",
+        "hash": "c6b0cfa3",
+        "encoded": "f%22%7C--------%7C-------%7C%22,",
+        "prevChunkIds": []
+      },
+      "609": {
+        "chunkId": "4ca1c5",
+        "hash": "05748636",
+        "encoded": "f%22%7C%20Company%20%7C%20%7Bcompany_name%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "610": {
+        "chunkId": "4ca1c5",
+        "hash": "0abdf50d",
+        "encoded": "f%22%7C%20Symbol%20%7C%20%7Bstock_symbol%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "611": {
+        "chunkId": "4ca1c5",
+        "hash": "5d1a7bea",
+        "encoded": "f%22%7C%20Sector%20%7C%20%7Bsector%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "612": {
+        "chunkId": "4ca1c5",
+        "hash": "9d776009",
+        "encoded": "f%22%7C%20Industry%20%7C%20%7Bindustry%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "613": {
+        "chunkId": "4ca1c5",
+        "hash": "a8cca1ce",
+        "encoded": "f%22%7C%20Current%20Price%20%7C%20%7B'%E2%82%B9%7B:.2f%7D'.format(current_price)%20if%20current_price%20else%20'N/A'%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "614": {
+        "chunkId": "4ca1c5",
+        "hash": "ff7a7930",
+        "encoded": "f%22%7C%20Day%20Change%20%7C%20%7B'%E2%82%B9%7B:.2f%7D%20(%7B:.2f%7D%25)'.format(day_change,%20day_change_pct)%20if%20day_change%20is%20not%20None%20else%20'N/A'%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "615": {
+        "chunkId": "4ca1c5",
+        "hash": "a7d9100e",
+        "encoded": "f%22%7C%2052-Week%20High%20%7C%20%7B'%E2%82%B9%7B:.2f%7D'.format(week_52_high)%20if%20week_52_high%20else%20'N/A'%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "616": {
+        "chunkId": "4ca1c5",
+        "hash": "73022266",
+        "encoded": "f%22%7C%2052-Week%20Low%20%7C%20%7B'%E2%82%B9%7B:.2f%7D'.format(week_52_low)%20if%20week_52_low%20else%20'N/A'%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "617": {
+        "chunkId": "4ca1c5",
+        "hash": "69080929",
+        "encoded": "f%22%7C%20P/E%20Ratio%20%7C%20%7Bpe_ratio%20if%20pe_ratio%20else%20'N/A'%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "618": {
+        "chunkId": "4ca1c5",
+        "hash": "c6e5b0da",
+        "encoded": "f%22%7C%20P/B%20Ratio%20%7C%20%7Bpb_ratio%20if%20pb_ratio%20else%20'N/A'%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "619": {
+        "chunkId": "4ca1c5",
+        "hash": "0adda969",
+        "encoded": "f%22%7C%20Market%20Cap%20%7C%20%7B'%E2%82%B9%7B:,.0f%7D'.format(market_cap)%20if%20market_cap%20else%20'N/A'%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "620": {
+        "chunkId": "4ca1c5",
+        "hash": "0132fa20",
+        "encoded": "f%22%7C%20ROE%20%7C%20%7B'%7B:.2f%7D%25'.format(roe%20*%20100)%20if%20roe%20else%20'N/A'%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "621": {
+        "chunkId": "4ca1c5",
+        "hash": "20cc875a",
+        "encoded": "f%22%7C%20Dividend%20Yield%20%7C%20%7B'%7B:.2f%7D%25'.format(div_yield%20*%20100)%20if%20div_yield%20else%20'N/A'%7D%20%7C%22,",
+        "prevChunkIds": []
+      },
+      "622": {
+        "chunkId": "4ca1c5",
+        "hash": "51bb1744",
+        "encoded": "f%22%22,",
+        "prevChunkIds": []
+      },
+      "623": {
+        "chunkId": "4ca1c5",
+        "hash": "d02d2dcf",
+        "encoded": "f%22---%22,",
+        "prevChunkIds": []
+      },
+      "624": {
+        "chunkId": "4ca1c5",
+        "hash": "a9839441",
+        "encoded": "f%22%22,",
+        "prevChunkIds": []
+      },
+      "625": {
+        "chunkId": "4ca1c5",
+        "hash": "80a2449d",
+        "encoded": "%5D",
+        "prevChunkIds": []
+      },
+      "627": {
+        "chunkId": "4ca1c5",
+        "hash": "10d7ab8e",
+        "encoded": "def%20_section(title:%20str,%20content:%20str%20%7C%20None,%20icon:%20str%20=%20%22%22)%20-%3E%20list%5Bstr%5D:",
+        "prevChunkIds": []
+      },
+      "628": {
+        "chunkId": "4ca1c5",
+        "hash": "6c579440",
+        "encoded": "%22%22%22Helper%20to%20add%20a%20formatted%20section%20to%20the%20markdown.%22%22%22",
+        "prevChunkIds": []
+      },
+      "629": {
+        "chunkId": "4ca1c5",
+        "hash": "dd378c05",
+        "encoded": "lines%20=%20%5B",
+        "prevChunkIds": []
+      },
+      "630": {
+        "chunkId": "4ca1c5",
+        "hash": "223c9cc0",
+        "encoded": "f%22##%20%7Bicon%20+%20'%20'%20if%20icon%20else%20''%7D%7Btitle%7D%22,",
+        "prevChunkIds": []
+      },
+      "631": {
+        "chunkId": "4ca1c5",
+        "hash": "7c9054f0",
+        "encoded": "f%22%22,",
+        "prevChunkIds": []
+      },
+      "632": {
+        "chunkId": "4ca1c5",
+        "hash": "a741f89a",
+        "encoded": "%5D",
+        "prevChunkIds": []
+      },
+      "633": {
+        "chunkId": "4ca1c5",
+        "hash": "626dfe92",
+        "encoded": "if%20content%20and%20not%20content.strip().startswith(%22Error:%22):",
+        "prevChunkIds": []
+      },
+      "634": {
+        "chunkId": "4ca1c5",
+        "hash": "6f848ce6",
+        "encoded": "#%20Clean%20up%20the%20content%20and%20format%20it",
+        "prevChunkIds": []
+      },
+      "635": {
+        "chunkId": "4ca1c5",
+        "hash": "8f6fbe21",
+        "encoded": "cleaned%20=%20content.strip()",
+        "prevChunkIds": []
+      },
+      "636": {
+        "chunkId": "4ca1c5",
+        "hash": "f2677224",
+        "encoded": "lines.append(cleaned)",
+        "prevChunkIds": []
+      },
+      "637": {
+        "chunkId": "4ca1c5",
+        "hash": "8519a17c",
+        "encoded": "elif%20content%20and%20content.strip().startswith(%22Error:%22):",
+        "prevChunkIds": []
+      },
+      "638": {
+        "chunkId": "4ca1c5",
+        "hash": "f3b571c9",
+        "encoded": "lines.append(f%22%3E%20%E2%9A%A0%EF%B8%8F%20**Agent%20Error:**%20%7Bcontent.strip()%7D%22)",
+        "prevChunkIds": []
+      },
+      "639": {
+        "chunkId": "4ca1c5",
+        "hash": "954df3ad",
+        "encoded": "else:",
+        "prevChunkIds": []
+      },
+      "640": {
+        "chunkId": "4ca1c5",
+        "hash": "7caa124a",
+        "encoded": "lines.append(%22%3E%20*No%20data%20available%20for%20this%20section.*%22)",
+        "prevChunkIds": []
+      },
+      "641": {
+        "chunkId": "4ca1c5",
+        "hash": "02ce9ce6",
+        "encoded": "lines%20+=%20%5Bf%22%22,%20f%22---%22,%20f%22%22%5D",
+        "prevChunkIds": []
+      },
+      "642": {
+        "chunkId": "4ca1c5",
+        "hash": "a97cd37c",
+        "encoded": "return%20lines",
+        "prevChunkIds": []
+      },
+      "644": {
+        "chunkId": "4ca1c5",
+        "hash": "08a9d1e8",
+        "encoded": "#%20Phase%201:%20Data%20Gathering%20sections",
+        "prevChunkIds": []
+      },
+      "645": {
+        "chunkId": "4ca1c5",
+        "hash": "df30a5bf",
+        "encoded": "md_lines%20+=%20%5Bf%22##%20Phase%201:%20Data%20Gathering%22,%20f%22%22%5D",
+        "prevChunkIds": []
+      },
+      "647": {
+        "chunkId": "4ca1c5",
+        "hash": "38e6efa8",
+        "encoded": "md_lines%20+=%20_section(",
+        "prevChunkIds": []
+      },
+      "648": {
+        "chunkId": "4ca1c5",
+        "hash": "cd6e0180",
+        "encoded": "%22Fundamental%20Analysis%22,",
+        "prevChunkIds": []
+      },
+      "649": {
+        "chunkId": "4ca1c5",
+        "hash": "25cc90d9",
+        "encoded": "results.get(%22fundamental%22),",
+        "prevChunkIds": []
+      },
+      "650": {
+        "chunkId": "4ca1c5",
+        "hash": "c991776a",
+        "encoded": "%22%F0%9F%93%8A%22",
+        "prevChunkIds": []
+      },
+      "651": {
+        "chunkId": "4ca1c5",
+        "hash": "2e933644",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "653": {
+        "chunkId": "4ca1c5",
+        "hash": "1ac5bc6b",
+        "encoded": "md_lines%20+=%20_section(",
+        "prevChunkIds": []
+      },
+      "654": {
+        "chunkId": "4ca1c5",
+        "hash": "8ed2dfe8",
+        "encoded": "%22Technical%20Analysis%22,",
+        "prevChunkIds": []
+      },
+      "655": {
+        "chunkId": "4ca1c5",
+        "hash": "8d0e4ce2",
+        "encoded": "results.get(%22technical%22),",
+        "prevChunkIds": []
+      },
+      "656": {
+        "chunkId": "4ca1c5",
+        "hash": "7f02e2d9",
+        "encoded": "%22%F0%9F%93%88%22",
+        "prevChunkIds": []
+      },
+      "657": {
+        "chunkId": "4ca1c5",
+        "hash": "4602b710",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "659": {
+        "chunkId": "4ca1c5",
+        "hash": "6ed426ad",
+        "encoded": "md_lines%20+=%20_section(",
+        "prevChunkIds": []
+      },
+      "660": {
+        "chunkId": "4ca1c5",
+        "hash": "1f0bf4b9",
+        "encoded": "%22News%20Intelligence%20Analysis%22,",
+        "prevChunkIds": []
+      },
+      "661": {
+        "chunkId": "4ca1c5",
+        "hash": "36476eee",
+        "encoded": "results.get(%22news_intelligence%22),",
+        "prevChunkIds": []
+      },
+      "662": {
+        "chunkId": "4ca1c5",
+        "hash": "618394e6",
+        "encoded": "%22%F0%9F%93%B0%22",
+        "prevChunkIds": []
+      },
+      "663": {
+        "chunkId": "4ca1c5",
+        "hash": "8f33797a",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "665": {
+        "chunkId": "4ca1c5",
+        "hash": "8e5e3e9f",
+        "encoded": "md_lines%20+=%20_section(",
+        "prevChunkIds": []
+      },
+      "666": {
+        "chunkId": "4ca1c5",
+        "hash": "79749a4f",
+        "encoded": "%22Sentiment%20Analysis%22,",
+        "prevChunkIds": []
+      },
+      "667": {
+        "chunkId": "4ca1c5",
+        "hash": "1825bbf8",
+        "encoded": "results.get(%22sentiment%22),",
+        "prevChunkIds": []
+      },
+      "668": {
+        "chunkId": "4ca1c5",
+        "hash": "014899b3",
+        "encoded": "%22%F0%9F%92%AC%22",
+        "prevChunkIds": []
+      },
+      "669": {
+        "chunkId": "4ca1c5",
+        "hash": "822f589b",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "671": {
+        "chunkId": "4ca1c5",
+        "hash": "6164af9a",
+        "encoded": "md_lines%20+=%20_section(",
+        "prevChunkIds": []
+      },
+      "672": {
+        "chunkId": "4ca1c5",
+        "hash": "cabfd177",
+        "encoded": "%22Macroeconomic%20Analysis%22,",
+        "prevChunkIds": []
+      },
+      "673": {
+        "chunkId": "4ca1c5",
+        "hash": "0a8c7394",
+        "encoded": "results.get(%22macro%22),",
+        "prevChunkIds": []
+      },
+      "674": {
+        "chunkId": "4ca1c5",
+        "hash": "5eb82e11",
+        "encoded": "%22%F0%9F%8C%90%22",
+        "prevChunkIds": []
+      },
+      "675": {
+        "chunkId": "4ca1c5",
+        "hash": "6d06272a",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "677": {
+        "chunkId": "4ca1c5",
+        "hash": "3e269085",
+        "encoded": "md_lines%20+=%20_section(",
+        "prevChunkIds": []
+      },
+      "678": {
+        "chunkId": "4ca1c5",
+        "hash": "e957960a",
+        "encoded": "%22Document%20Analysis%22,",
+        "prevChunkIds": []
+      },
+      "679": {
+        "chunkId": "4ca1c5",
+        "hash": "b2a6a043",
+        "encoded": "results.get(%22document%22),",
+        "prevChunkIds": []
+      },
+      "680": {
+        "chunkId": "4ca1c5",
+        "hash": "3f0261fa",
+        "encoded": "%22%F0%9F%93%84%22",
+        "prevChunkIds": []
+      },
+      "681": {
+        "chunkId": "4ca1c5",
+        "hash": "aedc46c9",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "683": {
+        "chunkId": "4ca1c5",
+        "hash": "dfbf1ad6",
+        "encoded": "#%20Phase%202:%20Debate%20sections",
+        "prevChunkIds": []
+      },
+      "684": {
+        "chunkId": "4ca1c5",
+        "hash": "e167388d",
+        "encoded": "md_lines%20+=%20%5Bf%22##%20Phase%202:%20Bull%20vs%20Bear%20Debate%22,%20f%22%22%5D",
+        "prevChunkIds": []
+      },
+      "686": {
+        "chunkId": "4ca1c5",
+        "hash": "abcc23c1",
+        "encoded": "md_lines%20+=%20_section(",
+        "prevChunkIds": []
+      },
+      "687": {
+        "chunkId": "4ca1c5",
+        "hash": "935c5ca4",
+        "encoded": "%22Bull%20Case%22,",
+        "prevChunkIds": []
+      },
+      "688": {
+        "chunkId": "4ca1c5",
+        "hash": "d73aa21c",
+        "encoded": "results.get(%22bull_case%22),",
+        "prevChunkIds": []
+      },
+      "689": {
+        "chunkId": "4ca1c5",
+        "hash": "f09d3f57",
+        "encoded": "%22%F0%9F%90%82%22",
+        "prevChunkIds": []
+      },
+      "690": {
+        "chunkId": "4ca1c5",
+        "hash": "c8171a39",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "692": {
+        "chunkId": "4ca1c5",
+        "hash": "f1ae5d70",
+        "encoded": "md_lines%20+=%20_section(",
+        "prevChunkIds": []
+      },
+      "693": {
+        "chunkId": "4ca1c5",
+        "hash": "31e42b5d",
+        "encoded": "%22Bear%20Case%22,",
+        "prevChunkIds": []
+      },
+      "694": {
+        "chunkId": "4ca1c5",
+        "hash": "055d39bc",
+        "encoded": "results.get(%22bear_case%22),",
+        "prevChunkIds": []
+      },
+      "695": {
+        "chunkId": "4ca1c5",
+        "hash": "a959e863",
+        "encoded": "%22%F0%9F%90%BB%22",
+        "prevChunkIds": []
+      },
+      "696": {
+        "chunkId": "4ca1c5",
+        "hash": "82d23810",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "698": {
+        "chunkId": "4ca1c5",
+        "hash": "00e446f4",
+        "encoded": "md_lines%20+=%20_section(",
+        "prevChunkIds": []
+      },
+      "699": {
+        "chunkId": "4ca1c5",
+        "hash": "4a3c0304",
+        "encoded": "%22Debate%20Verdict%22,",
+        "prevChunkIds": []
+      },
+      "700": {
+        "chunkId": "4ca1c5",
+        "hash": "d121418c",
+        "encoded": "results.get(%22debate_verdict%22),",
+        "prevChunkIds": []
+      },
+      "701": {
+        "chunkId": "4ca1c5",
+        "hash": "df1b9659",
+        "encoded": "%22%E2%9A%96%EF%B8%8F%22",
+        "prevChunkIds": []
+      },
+      "702": {
+        "chunkId": "4ca1c5",
+        "hash": "41bf0350",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "704": {
+        "chunkId": "4ca1c5",
+        "hash": "e6e11e6e",
+        "encoded": "#%20Phase%203:%20Risk%20Assessment",
+        "prevChunkIds": []
+      },
+      "705": {
+        "chunkId": "4ca1c5",
+        "hash": "3f2525a8",
+        "encoded": "md_lines%20+=%20%5Bf%22##%20Phase%203:%20Risk%20Assessment%22,%20f%22%22%5D",
+        "prevChunkIds": []
+      },
+      "707": {
+        "chunkId": "4ca1c5",
+        "hash": "dd9eabfb",
+        "encoded": "md_lines%20+=%20_section(",
+        "prevChunkIds": []
+      },
+      "708": {
+        "chunkId": "4ca1c5",
+        "hash": "46ec8433",
+        "encoded": "%22Risk%20Assessment%22,",
+        "prevChunkIds": []
+      },
+      "709": {
+        "chunkId": "4ca1c5",
+        "hash": "636d05f7",
+        "encoded": "results.get(%22risk_assessment%22),",
+        "prevChunkIds": []
+      },
+      "710": {
+        "chunkId": "4ca1c5",
+        "hash": "440a00bc",
+        "encoded": "%22%F0%9F%9B%A1%EF%B8%8F%22",
+        "prevChunkIds": []
+      },
+      "711": {
+        "chunkId": "4ca1c5",
+        "hash": "dbf70e14",
+        "encoded": ")",
+        "prevChunkIds": []
+      },
+      "713": {
+        "chunkId": "4ca1c5",
+        "hash": "f5fa23f5",
+        "encoded": "#%20Footer",
+        "prevChunkIds": []
+      },
+      "714": {
+        "chunkId": "4ca1c5",
+        "hash": "6fdf6e53",
+        "encoded": "md_lines%20+=%20%5B",
+        "prevChunkIds": []
+      },
+      "715": {
+        "chunkId": "4ca1c5",
+        "hash": "c0b87b34",
+        "encoded": "f%22---%22,",
+        "prevChunkIds": []
+      },
+      "716": {
+        "chunkId": "4ca1c5",
+        "hash": "a7b246de",
+        "encoded": "f%22%22,",
+        "prevChunkIds": []
+      },
+      "717": {
+        "chunkId": "4ca1c5",
+        "hash": "a512220d",
+        "encoded": "f%22*Report%20generated%20by%20Indian%20Stock%20AI%20Agent%20on%20%7Banalysis_date%7D*%22,",
+        "prevChunkIds": []
+      },
+      "718": {
+        "chunkId": "4ca1c5",
+        "hash": "fd0b08b7",
+        "encoded": "f%22%22,",
+        "prevChunkIds": []
+      },
+      "719": {
+        "chunkId": "4ca1c5",
+        "hash": "ebad82fc",
+        "encoded": "%5D",
+        "prevChunkIds": []
+      },
+      "721": {
+        "chunkId": "4ca1c5",
+        "hash": "1a649e78",
+        "encoded": "return%20%22%5Cn%22.join(md_lines)",
+        "prevChunkIds": []
+      },
+      "724": {
+        "chunkId": "4ca1c5",
+        "hash": "067f14ee",
+        "encoded": "def%20save_markdown_report(md_content:%20str,%20stock_symbol:%20str,%20pdf_path:%20str%20%7C%20None%20=%20None)%20-%3E%20str:",
+        "prevChunkIds": []
+      },
+      "725": {
+        "chunkId": "4ca1c5",
+        "hash": "21a4f75f",
+        "encoded": "%22%22%22",
+        "prevChunkIds": []
+      },
+      "726": {
+        "chunkId": "4ca1c5",
+        "hash": "cfbe5c9c",
+        "encoded": "Save%20the%20Markdown%20report%20to%20a%20.md%20file%20alongside%20the%20PDF%20report.",
+        "prevChunkIds": []
+      },
+      "728": {
+        "chunkId": "4ca1c5",
+        "hash": "a00fd4c2",
+        "encoded": "The%20file%20is%20named%20using%20the%20same%20convention%20as%20the%20PDF:",
+        "prevChunkIds": []
+      },
+      "729": {
+        "chunkId": "4ca1c5",
+        "hash": "73261060",
+        "encoded": "%7BSYMBOL%7D_%7BRECOMMENDATION%7D_%7BTIMESTAMP%7D.md",
+        "prevChunkIds": []
+      },
+      "731": {
+        "chunkId": "4ca1c5",
+        "hash": "23a92a11",
+        "encoded": "If%20pdf_path%20is%20provided,%20the%20MD%20file%20will%20be%20saved%20in%20the%20same%20directory",
+        "prevChunkIds": []
+      },
+      "732": {
+        "chunkId": "4ca1c5",
+        "hash": "84d1212c",
+        "encoded": "and%20with%20the%20same%20base%20name%20(just%20with%20.md%20extension).",
+        "prevChunkIds": []
+      },
+      "734": {
+        "chunkId": "4ca1c5",
+        "hash": "2219a8eb",
+        "encoded": "Args:",
+        "prevChunkIds": []
+      },
+      "735": {
+        "chunkId": "4ca1c5",
+        "hash": "42e60717",
+        "encoded": "md_content:%20The%20Markdown%20content%20to%20save",
+        "prevChunkIds": []
+      },
+      "736": {
+        "chunkId": "4ca1c5",
+        "hash": "d5e68cdd",
+        "encoded": "stock_symbol:%20Stock%20symbol%20used%20for%20fallback%20naming",
+        "prevChunkIds": []
+      },
+      "737": {
+        "chunkId": "4ca1c5",
+        "hash": "92503d30",
+        "encoded": "pdf_path:%20Optional%20path%20to%20the%20generated%20PDF%20file%20for%20co-location",
+        "prevChunkIds": []
+      },
+      "739": {
+        "chunkId": "4ca1c5",
+        "hash": "e36060de",
+        "encoded": "Returns:",
+        "prevChunkIds": []
+      },
+      "740": {
+        "chunkId": "4ca1c5",
+        "hash": "a8953593",
+        "encoded": "Path%20to%20the%20saved%20Markdown%20file",
+        "prevChunkIds": []
+      },
+      "741": {
+        "chunkId": "4ca1c5",
+        "hash": "62be9b39",
+        "encoded": "%22%22%22",
+        "prevChunkIds": []
+      },
+      "742": {
+        "chunkId": "4ca1c5",
+        "hash": "e2ccfd9d",
+        "encoded": "from%20config%20import%20PDF_OUTPUT_DIR",
+        "prevChunkIds": []
+      },
+      "744": {
+        "chunkId": "4ca1c5",
+        "hash": "9b287b7d",
+        "encoded": "if%20pdf_path:",
+        "prevChunkIds": []
+      },
+      "745": {
+        "chunkId": "4ca1c5",
+        "hash": "80c3ef74",
+        "encoded": "#%20Save%20alongside%20the%20PDF%20with%20same%20base%20name%20but%20.md%20extension",
+        "prevChunkIds": []
+      },
+      "746": {
+        "chunkId": "4ca1c5",
+        "hash": "80a18597",
+        "encoded": "pdf_file%20=%20Path(pdf_path)",
+        "prevChunkIds": []
+      },
+      "747": {
+        "chunkId": "4ca1c5",
+        "hash": "f2d797f7",
+        "encoded": "md_path%20=%20pdf_file.with_suffix(%22.md%22)",
+        "prevChunkIds": []
+      },
+      "748": {
+        "chunkId": "4ca1c5",
+        "hash": "a91df85e",
+        "encoded": "else:",
+        "prevChunkIds": []
+      },
+      "749": {
+        "chunkId": "4ca1c5",
+        "hash": "830ddcd3",
+        "encoded": "#%20Fallback:%20use%20same%20directory%20and%20naming%20convention%20as%20PDF",
+        "prevChunkIds": []
+      },
+      "750": {
+        "chunkId": "4ca1c5",
+        "hash": "d13f8fbd",
+        "encoded": "timestamp%20=%20datetime.now().strftime(%22%25Y%25m%25d_%25H%25M%25S%22)",
+        "prevChunkIds": []
+      },
+      "751": {
+        "chunkId": "4ca1c5",
+        "hash": "dfb4496a",
+        "encoded": "safe_symbol%20=%20stock_symbol.replace(%22.%22,%20%22_%22)",
+        "prevChunkIds": []
+      },
+      "752": {
+        "chunkId": "4ca1c5",
+        "hash": "3648124a",
+        "encoded": "filename%20=%20f%22%7Bsafe_symbol%7D_%7Btimestamp%7D.md%22",
+        "prevChunkIds": []
+      },
+      "753": {
+        "chunkId": "4ca1c5",
+        "hash": "57a9e4ee",
+        "encoded": "md_path%20=%20Path(PDF_OUTPUT_DIR)%20/%20filename",
+        "prevChunkIds": []
+      },
+      "755": {
+        "chunkId": "4ca1c5",
+        "hash": "174b5beb",
+        "encoded": "#%20Ensure%20output%20directory%20exists",
+        "prevChunkIds": []
+      },
+      "756": {
+        "chunkId": "4ca1c5",
+        "hash": "2913c0b0",
+        "encoded": "md_path.parent.mkdir(parents=True,%20exist_ok=True)",
+        "prevChunkIds": []
+      },
+      "758": {
+        "chunkId": "4ca1c5",
+        "hash": "65b9bb54",
+        "encoded": "with%20open(md_path,%20%22w%22,%20encoding=%22utf-8%22)%20as%20f:",
+        "prevChunkIds": []
+      },
+      "759": {
+        "chunkId": "4ca1c5",
+        "hash": "4ea7eaae",
+        "encoded": "f.write(md_content)",
+        "prevChunkIds": []
+      },
+      "761": {
+        "chunkId": "4ca1c5",
+        "hash": "614e14e3",
+        "encoded": "return%20str(md_path)",
+        "prevChunkIds": []
+      },
+      "764": {
+        "chunkId": "4ca1c5",
+        "hash": "2c341adf",
+        "encoded": "#%20Create%20a%20simple%20orchestrator%20agent%20for%20generating%20final%20PDF",
+        "prevChunkIds": []
+      },
+      "1502": {
+        "chunkId": "dc635a",
+        "hash": "2cd59e88",
+        "encoded": "#%20Generate%20PDF%20directly",
+        "prevChunkIds": []
+      },
+      "1503": {
+        "chunkId": "dc635a",
+        "hash": "0b03a81f",
+        "encoded": "pdf_path%20=%20generate_stock_report(report_data)",
+        "prevChunkIds": []
+      },
+      "1504": {
+        "chunkId": "dc635a",
+        "hash": "4d960750",
+        "encoded": "print(f%22%5BOK%5D%20PDF%20Report%20generated:%20%7Bpdf_path%7D%22)",
+        "prevChunkIds": []
+      },
+      "1505": {
+        "chunkId": "dc635a",
+        "hash": "323eb06a",
+        "encoded": "if%20progress_callback:",
+        "prevChunkIds": []
+      },
+      "1506": {
+        "chunkId": "dc635a",
+        "hash": "1b226152",
+        "encoded": "try:",
+        "prevChunkIds": []
+      },
+      "1507": {
+        "chunkId": "dc635a",
+        "hash": "be174c5f",
+        "encoded": "progress_callback(%7B%22stage%22:%20%22final%22,%20%22step%22:%20%22pdf_done%22,%20%22message%22:%20f%22PDF%20generated:%20%7Bpdf_path%7D%22%7D)",
+        "prevChunkIds": []
+      },
+      "1508": {
+        "chunkId": "dc635a",
+        "hash": "0648671f",
+        "encoded": "except%20Exception:",
+        "prevChunkIds": []
+      },
+      "1509": {
+        "chunkId": "dc635a",
+        "hash": "4ee70202",
+        "encoded": "pass",
+        "prevChunkIds": []
+      },
+      "1511": {
+        "chunkId": "dc635a",
+        "hash": "66ce766e",
+        "encoded": "#%20Log%20what%20data%20was%20used",
+        "prevChunkIds": []
+      },
+      "1512": {
+        "chunkId": "dc635a",
+        "hash": "c13538b0",
+        "encoded": "print(f%22%20%20%20%20%20%5BDATA%20USED%5D%20Price:%20%7Braw_data.get('current_price')%7D,%2052W%20High:%20%7Braw_data.get('week_52_high')%7D,%2052W%20Low:%20%7Braw_data.get('week_52_low')%7D%22)",
+        "prevChunkIds": []
+      },
+      "1513": {
+        "chunkId": "dc635a",
+        "hash": "d223c1c3",
+        "encoded": "print(f%22%20%20%20%20%20%5BDATA%20USED%5D%20ROE:%20%7Braw_data.get('roe')%7D,%20Dividend:%20%7Braw_data.get('dividend_yield')%7D%22)",
+        "prevChunkIds": []
+      },
+      "1514": {
+        "chunkId": "dc635a",
+        "hash": "17383c30",
+        "encoded": "print(f%22%20%20%20%20%20%5BEXTRACTED%5D%20Stop%20Loss:%20%7Brisk_metrics.get('stop_loss')%7D,%20Target:%20%7Brisk_metrics.get('target_price')%7D%22)",
+        "prevChunkIds": []
+      },
+      "1516": {
+        "chunkId": "dc635a",
+        "hash": "5f0d8b82",
+        "encoded": "#%20Generate%20and%20save%20Markdown%20report%20alongside%20PDF",
+        "prevChunkIds": []
+      },
+      "1517": {
+        "chunkId": "dc635a",
+        "hash": "336a005f",
+        "encoded": "print(%22%5Cn%5BFinal%20Step%5D%20Generating%20Markdown%20Report...%22)",
+        "prevChunkIds": []
+      },
+      "1518": {
+        "chunkId": "dc635a",
+        "hash": "c2a40d97",
+        "encoded": "try:",
+        "prevChunkIds": []
+      },
+      "1519": {
+        "chunkId": "dc635a",
+        "hash": "f87437e5",
+        "encoded": "md_content%20=%20generate_markdown_report(results,%20raw_data=raw_data)",
+        "prevChunkIds": []
+      },
+      "1520": {
+        "chunkId": "dc635a",
+        "hash": "fb1ba59e",
+        "encoded": "md_path%20=%20save_markdown_report(md_content,%20stock_symbol,%20pdf_path=pdf_path)",
+        "prevChunkIds": []
+      },
+      "1521": {
+        "chunkId": "dc635a",
+        "hash": "5312087c",
+        "encoded": "print(f%22%5BOK%5D%20Markdown%20Report%20saved:%20%7Bmd_path%7D%22)",
+        "prevChunkIds": []
+      },
+      "1522": {
+        "chunkId": "dc635a",
+        "hash": "753c7b4e",
+        "encoded": "if%20progress_callback:",
+        "prevChunkIds": []
+      },
+      "1523": {
+        "chunkId": "dc635a",
+        "hash": "5653cb87",
+        "encoded": "try:",
+        "prevChunkIds": []
+      },
+      "1524": {
+        "chunkId": "dc635a",
+        "hash": "1983012a",
+        "encoded": "progress_callback(%7B%22stage%22:%20%22final%22,%20%22step%22:%20%22md_done%22,%20%22message%22:%20f%22Markdown%20report%20saved:%20%7Bmd_path%7D%22%7D)",
+        "prevChunkIds": []
+      },
+      "1525": {
+        "chunkId": "dc635a",
+        "hash": "73416a3d",
+        "encoded": "except%20Exception:",
+        "prevChunkIds": []
+      },
+      "1526": {
+        "chunkId": "dc635a",
+        "hash": "fcdd9cb8",
+        "encoded": "pass",
+        "prevChunkIds": []
+      },
+      "1527": {
+        "chunkId": "dc635a",
+        "hash": "5ce82d99",
+        "encoded": "md_report_line%20=%20f%22%5CnMarkdown%20Report%20saved:%20%7Bmd_path%7D%22",
+        "prevChunkIds": []
+      },
+      "1528": {
+        "chunkId": "dc635a",
+        "hash": "9ee0b124",
+        "encoded": "except%20Exception%20as%20md_err:",
+        "prevChunkIds": []
+      },
+      "1529": {
+        "chunkId": "dc635a",
+        "hash": "7b32f61e",
+        "encoded": "print(f%22%5BWARN%5D%20Markdown%20report%20generation%20failed%20(non-critical):%20%7Bmd_err%7D%22)",
+        "prevChunkIds": []
+      },
+      "1530": {
+        "chunkId": "dc635a",
+        "hash": "445648f1",
+        "encoded": "md_report_line%20=%20%22%22",
+        "prevChunkIds": []
+      },
+      "1532": {
+        "chunkId": "dc635a",
+        "hash": "3822e306",
+        "encoded": "return%20formatted_report%20+%20f%22%5Cn%5CnPDF%20Report%20generated:%20%7Bpdf_path%7D%5CnRecommendation:%20%7Brecommendation%7D%20(Confidence:%20%7Bconfidence%7D%25)%7Bmd_report_line%7D%22",
+        "prevChunkIds": []
+      }
+    }
+  }
+}

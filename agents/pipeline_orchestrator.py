@@ -11,8 +11,10 @@ This is more reliable than handoff-based orchestration because:
 """
 
 import asyncio
+import os
 import yfinance as yf
 import json
+from datetime import datetime
 from typing import Callable, Optional
 from pathlib import Path
 from openai_sdk import Agent, Runner, ModelSettings
@@ -543,6 +545,214 @@ AGENTS THAT PARTICIPATED: {len(results['agents_run'])}/10
 ================================================================================
 """
     return report
+
+
+def generate_markdown_report(results: dict, raw_data: dict | None = None) -> str:
+    """
+    Generate a well-formatted Markdown report from analysis results.
+
+    This captures all intermediate analysis results from each agent and formats
+    them as a structured Markdown document suitable for saving as a .md file.
+
+    Args:
+        results: Dictionary containing all analysis results from the pipeline
+        raw_data: Optional raw stock data from yfinance for additional context
+
+    Returns:
+        Formatted Markdown string
+    """
+    stock_symbol = results.get("stock_symbol", "UNKNOWN")
+    analysis_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    agents_run = results.get("agents_run", [])
+
+    # Build header section
+    md_lines = [
+        f"# Stock Analysis Report: {stock_symbol}",
+        f"",
+        f"**Analysis Date:** {analysis_date}  ",
+        f"**Agents Participated:** {len(agents_run)}/10  ",
+        f"**Agents Run:** {', '.join(agents_run) if agents_run else 'None'}  ",
+        f"",
+        f"---",
+        f"",
+    ]
+
+    # Add raw data summary if available
+    if raw_data and isinstance(raw_data, dict):
+        md_lines += [
+            f"## Market Data Snapshot",
+            f"",
+        ]
+        company_name = raw_data.get("company_name", stock_symbol)
+        current_price = raw_data.get("current_price")
+        week_52_high = raw_data.get("week_52_high")
+        week_52_low = raw_data.get("week_52_low")
+        day_change = raw_data.get("day_change")
+        day_change_pct = raw_data.get("day_change_percent")
+        pe_ratio = raw_data.get("pe_ratio")
+        pb_ratio = raw_data.get("pb_ratio")
+        market_cap = raw_data.get("market_cap")
+        roe = raw_data.get("roe")
+        div_yield = raw_data.get("dividend_yield")
+        sector = raw_data.get("sector", "N/A")
+        industry = raw_data.get("industry", "N/A")
+
+        md_lines += [
+            f"| Metric | Value |",
+            f"|--------|-------|",
+            f"| Company | {company_name} |",
+            f"| Symbol | {stock_symbol} |",
+            f"| Sector | {sector} |",
+            f"| Industry | {industry} |",
+            f"| Current Price | {'₹{:.2f}'.format(current_price) if current_price else 'N/A'} |",
+            f"| Day Change | {'₹{:.2f} ({:.2f}%)'.format(day_change, day_change_pct) if day_change is not None else 'N/A'} |",
+            f"| 52-Week High | {'₹{:.2f}'.format(week_52_high) if week_52_high else 'N/A'} |",
+            f"| 52-Week Low | {'₹{:.2f}'.format(week_52_low) if week_52_low else 'N/A'} |",
+            f"| P/E Ratio | {pe_ratio if pe_ratio else 'N/A'} |",
+            f"| P/B Ratio | {pb_ratio if pb_ratio else 'N/A'} |",
+            f"| Market Cap | {'₹{:,.0f}'.format(market_cap) if market_cap else 'N/A'} |",
+            f"| ROE | {'{:.2f}%'.format(roe * 100) if roe else 'N/A'} |",
+            f"| Dividend Yield | {'{:.2f}%'.format(div_yield * 100) if div_yield else 'N/A'} |",
+            f"",
+            f"---",
+            f"",
+        ]
+
+    def _section(title: str, content: str | None, icon: str = "") -> list[str]:
+        """Helper to add a formatted section to the markdown."""
+        lines = [
+            f"## {icon + ' ' if icon else ''}{title}",
+            f"",
+        ]
+        if content and not content.strip().startswith("Error:"):
+            # Clean up the content and format it
+            cleaned = content.strip()
+            lines.append(cleaned)
+        elif content and content.strip().startswith("Error:"):
+            lines.append(f"> ⚠️ **Agent Error:** {content.strip()}")
+        else:
+            lines.append("> *No data available for this section.*")
+        lines += [f"", f"---", f""]
+        return lines
+
+    # Phase 1: Data Gathering sections
+    md_lines += [f"## Phase 1: Data Gathering", f""]
+
+    md_lines += _section(
+        "Fundamental Analysis",
+        results.get("fundamental"),
+        "📊"
+    )
+
+    md_lines += _section(
+        "Technical Analysis",
+        results.get("technical"),
+        "📈"
+    )
+
+    md_lines += _section(
+        "News Intelligence Analysis",
+        results.get("news_intelligence"),
+        "📰"
+    )
+
+    md_lines += _section(
+        "Sentiment Analysis",
+        results.get("sentiment"),
+        "💬"
+    )
+
+    md_lines += _section(
+        "Macroeconomic Analysis",
+        results.get("macro"),
+        "🌐"
+    )
+
+    md_lines += _section(
+        "Document Analysis",
+        results.get("document"),
+        "📄"
+    )
+
+    # Phase 2: Debate sections
+    md_lines += [f"## Phase 2: Bull vs Bear Debate", f""]
+
+    md_lines += _section(
+        "Bull Case",
+        results.get("bull_case"),
+        "🐂"
+    )
+
+    md_lines += _section(
+        "Bear Case",
+        results.get("bear_case"),
+        "🐻"
+    )
+
+    md_lines += _section(
+        "Debate Verdict",
+        results.get("debate_verdict"),
+        "⚖️"
+    )
+
+    # Phase 3: Risk Assessment
+    md_lines += [f"## Phase 3: Risk Assessment", f""]
+
+    md_lines += _section(
+        "Risk Assessment",
+        results.get("risk_assessment"),
+        "🛡️"
+    )
+
+    # Footer
+    md_lines += [
+        f"---",
+        f"",
+        f"*Report generated by Indian Stock AI Agent on {analysis_date}*",
+        f"",
+    ]
+
+    return "\n".join(md_lines)
+
+
+def save_markdown_report(md_content: str, stock_symbol: str, pdf_path: str | None = None) -> str:
+    """
+    Save the Markdown report to a .md file alongside the PDF report.
+
+    The file is named using the same convention as the PDF:
+    {SYMBOL}_{RECOMMENDATION}_{TIMESTAMP}.md
+
+    If pdf_path is provided, the MD file will be saved in the same directory
+    and with the same base name (just with .md extension).
+
+    Args:
+        md_content: The Markdown content to save
+        stock_symbol: Stock symbol used for fallback naming
+        pdf_path: Optional path to the generated PDF file for co-location
+
+    Returns:
+        Path to the saved Markdown file
+    """
+    from config import PDF_OUTPUT_DIR
+
+    if pdf_path:
+        # Save alongside the PDF with same base name but .md extension
+        pdf_file = Path(pdf_path)
+        md_path = pdf_file.with_suffix(".md")
+    else:
+        # Fallback: use same directory and naming convention as PDF
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_symbol = stock_symbol.replace(".", "_")
+        filename = f"{safe_symbol}_{timestamp}.md"
+        md_path = Path(PDF_OUTPUT_DIR) / filename
+
+    # Ensure output directory exists
+    md_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write(md_content)
+
+    return str(md_path)
 
 
 # Create a simple orchestrator agent for generating final PDF
@@ -1079,7 +1289,23 @@ Debate Verdict: {results.get('debate_verdict', 'N/A')[:500] if results.get('deba
         print(f"     [DATA USED] ROE: {raw_data.get('roe')}, Dividend: {raw_data.get('dividend_yield')}")
         print(f"     [EXTRACTED] Stop Loss: {risk_metrics.get('stop_loss')}, Target: {risk_metrics.get('target_price')}")
 
-        return formatted_report + f"\n\nPDF Report generated: {pdf_path}\nRecommendation: {recommendation} (Confidence: {confidence}%)"
+        # Generate and save Markdown report alongside PDF
+        print("\n[Final Step] Generating Markdown Report...")
+        try:
+            md_content = generate_markdown_report(results, raw_data=raw_data)
+            md_path = save_markdown_report(md_content, stock_symbol, pdf_path=pdf_path)
+            print(f"[OK] Markdown Report saved: {md_path}")
+            if progress_callback:
+                try:
+                    progress_callback({"stage": "final", "step": "md_done", "message": f"Markdown report saved: {md_path}"})
+                except Exception:
+                    pass
+            md_report_line = f"\nMarkdown Report saved: {md_path}"
+        except Exception as md_err:
+            print(f"[WARN] Markdown report generation failed (non-critical): {md_err}")
+            md_report_line = ""
+
+        return formatted_report + f"\n\nPDF Report generated: {pdf_path}\nRecommendation: {recommendation} (Confidence: {confidence}%){md_report_line}"
 
     except Exception as e:
         import traceback

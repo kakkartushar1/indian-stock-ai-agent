@@ -1,0 +1,31 @@
+{
+  "filename": "pipeline_orchestrator.py",
+  "path": "agents\\pipeline_orchestrator.py",
+  "version": "1.1",
+  "files": {
+    "808b6ca9": {
+      "value": [
+        {
+          "programming_language": "Markdown",
+          "fileName": "README.md",
+          "relativeFilePath": "README.md",
+          "startLine": [
+            1
+          ],
+          "endLine": [
+            418
+          ]
+        }
+      ]
+    }
+  },
+  "promptMessage": {
+    "c8e442ba": {
+      "value": "@Workspace Add 1 more feature to save the output as md file too. This refers to output that is printed on console before - \nHanding off to the Stock Analysis Orchestrator for final synthesis and PDF report generation"
+    }
+  },
+  "localPrompts": {},
+  "remotePrompts": {},
+  "figma": {},
+  "jira": {}
+}
