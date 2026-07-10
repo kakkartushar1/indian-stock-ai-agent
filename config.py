@@ -19,6 +19,12 @@ def _env_int(name: str, default: int) -> int:
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
 
+# Groq API Keys (primary, secondary, tertiary for fallback support)
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+GROQ_API_KEY_PRIMARY = os.getenv("GROQ_API_KEY_PRIMARY", None)
+GROQ_API_KEY_SECONDARY = os.getenv("GROQ_API_KEY_SECONDARY", None)
+GROQ_API_KEY_TERTIARY = os.getenv("GROQ_API_KEY_TERTIARY", None)
+
 # Mistral API Keys (primary, secondary, tertiary for fallback support)
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")
 MISTRAL_API_KEY_PRIMARY = os.getenv("MISTRAL_API_KEY_PRIMARY", None)

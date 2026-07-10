@@ -165,7 +165,7 @@ def _call_mistral_with_fallback(
             ) from exc
 
     # All keys exhausted with 429 errors — build a descriptive chain string.
-    key_chain = "\u2192".join(tried_labels)  # e.g. PRIMARY→SECONDARY→TERTIARY
+    key_chain = " -> ".join(tried_labels)  # e.g. PRIMARY -> SECONDARY -> TERTIARY
     exhausted_context = f"[All keys exhausted: {key_chain}]"
     print(
         f"[Mistral] {exhausted_context} All API keys hit 429 rate limit. "
@@ -231,6 +231,107 @@ def _is_rate_limit_error(exc: Exception) -> bool:
     return "429" in msg or "rate limit" in msg or "rate_limit" in msg or "rate_limited" in msg
 
 
+def _call_groq_with_fallback(
+    make_request_fn: Callable[[str], Any],
+    api_keys: list[str],
+    key_labels: list[str],
+) -> Any:
+    """Try each Groq API key in order, falling back only on HTTP 429 rate-limit errors.
+
+    Args:
+        make_request_fn: A callable that accepts an api_key string and performs the
+            Groq API call, returning the result on success or raising on failure.
+        api_keys: Ordered list of API keys to try (primary → secondary → tertiary).
+        key_labels: Human-readable labels for each key slot (never the actual key values).
+
+    Returns:
+        The result from the first successful call.
+
+    Raises:
+        The last 429 error if all keys are exhausted, or any non-429 error immediately.
+        Error messages always include the active key slot name (e.g. [Key: PRIMARY])
+        so the caller can surface it in user-facing output without exposing key values.
+    """
+    if not api_keys:
+        raise LLMConfigurationError("No Groq API keys configured.")
+
+    last_error: Exception | None = None
+    tried_labels: list[str] = []
+    for idx, (key, label) in enumerate(zip(api_keys, key_labels)):
+        upper_label = label.upper()
+        tried_labels.append(upper_label)
+        print(f"[Groq] Attempting request with {upper_label} key", flush=True)
+        logger.info("[Groq] Attempting request with %s key", upper_label)
+        try:
+            result = make_request_fn(key)
+            print(f"[Groq] {upper_label} key succeeded", flush=True)
+            logger.info("[Groq] %s key succeeded", upper_label)
+            return result
+        except Exception as exc:  # noqa: BLE001
+            # Only rotate to the next key on rate-limit (429) errors.
+            if _is_rate_limit_error(exc):
+                # Determine the next key label for the log message.
+                next_labels = key_labels[idx + 1 :]
+                if next_labels:
+                    next_label = next_labels[0].upper()
+                    print(
+                        f"[Groq] {upper_label} key hit 429 rate limit. "
+                        f"Rotating to {next_label} key...",
+                        flush=True,
+                    )
+                    logger.warning(
+                        "[Groq] %s key hit 429 rate limit. Rotating to %s key.",
+                        upper_label,
+                        next_label,
+                    )
+                else:
+                    print(
+                        f"[Groq] {upper_label} key hit 429 rate limit. "
+                        "No more keys to try.",
+                        flush=True,
+                    )
+                    logger.warning(
+                        "[Groq] %s key hit 429 rate limit. No more keys to try.",
+                        upper_label,
+                    )
+                last_error = exc
+                continue
+            # All other errors (auth, validation, server errors) propagate immediately.
+            print(
+                f"[Groq] {upper_label} key raised a non-429 error ({type(exc).__name__}); "
+                "not rotating.",
+                flush=True,
+            )
+            logger.error(
+                "[Groq] %s key raised non-429 error (%s); propagating immediately.",
+                upper_label,
+                type(exc).__name__,
+            )
+            # Re-raise with key slot context embedded in the message so callers
+            # can surface it in user-facing output (e.g. '[Key: PRIMARY] - ...').
+            key_context = f"[Key: {upper_label}]"
+            raise RuntimeError(
+                f"{key_context} {type(exc).__name__}: {exc}"
+            ) from exc
+
+    # All keys exhausted with 429 errors — build a descriptive chain string.
+    key_chain = " -> ".join(tried_labels)  # e.g. PRIMARY -> SECONDARY -> TERTIARY
+    exhausted_context = f"[All keys exhausted: {key_chain}]"
+    print(
+        f"[Groq] {exhausted_context} All API keys hit 429 rate limit. "
+        "Please wait before retrying or add more API keys.",
+        flush=True,
+    )
+    logger.warning(
+        "[Groq] %s All API keys hit 429 rate limit.",
+        exhausted_context,
+    )
+    raise LLMConfigurationError(
+        f"{exhausted_context} All Groq API keys exhausted due to rate limiting (429). "
+        "Please wait before retrying or add more API keys."
+    ) from last_error
+
+
 def load_llm_config() -> LLMProviderConfig:
     provider = _env("LLM_PROVIDER", "openai").lower()
     if provider not in SUPPORTED_PROVIDERS:
@@ -246,7 +347,20 @@ def load_llm_config() -> LLMProviderConfig:
         api_key = _required(_env("OPENAI_API_KEY"), "OPENAI_API_KEY", provider)
     elif provider == "groq":
         base_url = _custom_base_url(provider, "https://api.groq.com/openai/v1")
-        api_key = _required(_env("GROQ_API_KEY"), "GROQ_API_KEY", provider)
+        # Build the ordered list of fallback keys from the named slots.
+        _candidate_keys = [
+            _env("GROQ_API_KEY_PRIMARY"),
+            _env("GROQ_API_KEY_SECONDARY"),
+            _env("GROQ_API_KEY_TERTIARY"),
+        ]
+        _named_keys = [k for k in _candidate_keys if k]
+        if _named_keys:
+            # Use the primary key as the effective api_key for config; the fallback
+            # helper is used at call time (see _call_groq_with_fallback).
+            api_key = _named_keys[0]
+        else:
+            # Backward-compatible: fall back to the legacy GROQ_API_KEY.
+            api_key = _required(_env("GROQ_API_KEY"), "GROQ_API_KEY", provider)
     elif provider == "openrouter":
         base_url = _custom_base_url(provider, "https://openrouter.ai/api/v1")
         api_key = _required(_env("OPENROUTER_API_KEY"), "OPENROUTER_API_KEY", provider)
@@ -444,7 +558,7 @@ class _MistralFallbackModel(_get_mistral_fallback_base()):  # type: ignore[misc]
                 raise RuntimeError(f"{key_context} {type(exc).__name__}: {exc}") from exc
 
         # All keys exhausted.
-        key_chain = "→".join(tried_labels)
+        key_chain = " -> ".join(tried_labels)  # e.g. PRIMARY -> SECONDARY -> TERTIARY
         exhausted_context = f"[All keys exhausted: {key_chain}]"
         print(
             f"[Mistral] {exhausted_context} All API keys hit 429 rate limit. "
@@ -454,6 +568,144 @@ class _MistralFallbackModel(_get_mistral_fallback_base()):  # type: ignore[misc]
         logger.warning("[Mistral] %s All API keys hit 429 rate limit.", exhausted_context)
         raise LLMConfigurationError(
             f"{exhausted_context} All Mistral API keys exhausted due to rate limiting (429). "
+            "Please wait before retrying or add more API keys."
+        ) from last_error
+
+    # ------------------------------------------------------------------
+    # SDK model interface
+    # ------------------------------------------------------------------
+
+    async def get_response(self, *args: Any, **kwargs: Any) -> Any:
+        """Intercept get_response and apply key-rotation fallback."""
+        return await self._call_with_fallback("get_response", *args, **kwargs)
+
+    async def stream_response(self, *args: Any, **kwargs: Any) -> Any:
+        """Intercept stream_response and apply key-rotation fallback."""
+        return await self._call_with_fallback("stream_response", *args, **kwargs)
+
+
+class _GroqFallbackModel(_get_mistral_fallback_base()):  # type: ignore[misc]
+    """Thin wrapper around OpenAIChatCompletionsModel that rotates Groq API keys on 429.
+
+    The OpenAI Agents SDK calls ``get_response`` / ``stream_response`` on the model
+    object.  This wrapper intercepts those calls, tries each key in order, and embeds
+    the active key slot name in any error message so it surfaces in user-facing output.
+
+    Inherits from ``OpenAIChatCompletionsModel`` (which itself inherits from the SDK
+    ``Model`` ABC) so that ``isinstance(model, Model)`` is True and the SDK's
+    ``Agent`` constructor accepts it without raising a ``TypeError``.
+    """
+
+    def __init__(
+        self,
+        model_name: str,
+        api_keys: list[str],
+        key_labels: list[str],
+        base_url: str | None,
+        default_headers: dict[str, str] | None,
+        verify_ssl: bool,
+    ) -> None:
+        if not api_keys:
+            raise LLMConfigurationError("No Groq API keys configured.")
+        self._model_name = model_name
+        self._api_keys = api_keys
+        self._key_labels = [lbl.upper() for lbl in key_labels]
+        self._base_url = base_url
+        self._default_headers = default_headers
+        self._verify_ssl = verify_ssl
+        # Pre-build one AsyncOpenAI client per key slot so we can swap
+        # self._client on 429 without re-creating clients on every request.
+        self._key_clients: list[Any] = [
+            _make_openai_client(
+                api_key=key,
+                base_url=base_url,
+                default_headers=default_headers,
+                verify_ssl=verify_ssl,
+            )
+            for key in api_keys
+        ]
+        # Call super().__init__() with the PRIMARY key's client so that
+        # self._client (required by OpenAIChatCompletionsModel) is properly
+        # initialised and isinstance(model, Model) is satisfied by the SDK.
+        super().__init__(model=model_name, openai_client=self._key_clients[0])
+
+    # ------------------------------------------------------------------
+    # Core fallback logic (async)
+    # ------------------------------------------------------------------
+
+    async def _call_with_fallback(self, method_name: str, *args: Any, **kwargs: Any) -> Any:
+        """Try each key in order; rotate only on 429; embed key slot in error messages.
+
+        On each attempt ``self._client`` is swapped to the appropriate key's
+        AsyncOpenAI client so that the parent-class method uses the correct
+        credentials without needing a separate per-key model wrapper.
+        """
+        last_error: Exception | None = None
+        tried_labels: list[str] = []
+
+        for idx, (client, label) in enumerate(zip(self._key_clients, self._key_labels)):
+            tried_labels.append(label)
+            print(f"[Groq] Attempting request with {label} key", flush=True)
+            logger.info("[Groq] Attempting request with %s key", label)
+            try:
+                # Swap self._client to the current key's client before delegating
+                # to the parent class method so it uses the correct credentials.
+                self._client = client
+                result = await getattr(super(_GroqFallbackModel, self), method_name)(*args, **kwargs)
+                print(f"[Groq] {label} key succeeded", flush=True)
+                logger.info("[Groq] %s key succeeded", label)
+                return result
+            except Exception as exc:  # noqa: BLE001
+                if _is_rate_limit_error(exc):
+                    next_labels = self._key_labels[idx + 1 :]
+                    if next_labels:
+                        next_label = next_labels[0]
+                        print(
+                            f"[Groq] {label} key hit 429 rate limit. "
+                            f"Rotating to {next_label} key...",
+                            flush=True,
+                        )
+                        logger.warning(
+                            "[Groq] %s key hit 429 rate limit. Rotating to %s key.",
+                            label,
+                            next_label,
+                        )
+                    else:
+                        print(
+                            f"[Groq] {label} key hit 429 rate limit. No more keys to try.",
+                            flush=True,
+                        )
+                        logger.warning(
+                            "[Groq] %s key hit 429 rate limit. No more keys to try.", label
+                        )
+                    last_error = exc
+                    continue
+
+                # Non-429 error: propagate immediately with key slot context.
+                print(
+                    f"[Groq] {label} key raised a non-429 error ({type(exc).__name__}); "
+                    "not rotating.",
+                    flush=True,
+                )
+                logger.error(
+                    "[Groq] %s key raised non-429 error (%s); propagating immediately.",
+                    label,
+                    type(exc).__name__,
+                )
+                key_context = f"[Key: {label}]"
+                raise RuntimeError(f"{key_context} {type(exc).__name__}: {exc}") from exc
+
+        # All keys exhausted.
+        key_chain = " -> ".join(tried_labels)  # e.g. PRIMARY -> SECONDARY -> TERTIARY
+        exhausted_context = f"[All keys exhausted: {key_chain}]"
+        print(
+            f"[Groq] {exhausted_context} All API keys hit 429 rate limit. "
+            "Please wait before retrying or add more API keys.",
+            flush=True,
+        )
+        logger.warning("[Groq] %s All API keys hit 429 rate limit.", exhausted_context)
+        raise LLMConfigurationError(
+            f"{exhausted_context} All Groq API keys exhausted due to rate limiting (429). "
             "Please wait before retrying or add more API keys."
         ) from last_error
 
@@ -495,6 +747,28 @@ def _build_compatible_model(config: LLMProviderConfig) -> Any:
                 verify_ssl=config.verify_ssl,
             )
         # Single key (or legacy MISTRAL_API_KEY): fall through to standard model.
+
+    elif config.provider == "groq":
+        # Build the ordered list of fallback keys.
+        _candidate_pairs = [
+            (_env("GROQ_API_KEY_PRIMARY"), "PRIMARY"),
+            (_env("GROQ_API_KEY_SECONDARY"), "SECONDARY"),
+            (_env("GROQ_API_KEY_TERTIARY"), "TERTIARY"),
+        ]
+        _named_pairs = [(k, lbl) for k, lbl in _candidate_pairs if k]
+        if len(_named_pairs) > 1:
+            # Multiple keys available: use the fallback-aware model wrapper.
+            api_keys = [k for k, _ in _named_pairs]
+            key_labels = [lbl for _, lbl in _named_pairs]
+            return _GroqFallbackModel(
+                model_name=config.model_name,
+                api_keys=api_keys,
+                key_labels=key_labels,
+                base_url=config.base_url,
+                default_headers=config.default_headers or None,
+                verify_ssl=config.verify_ssl,
+            )
+        # Single key (or legacy GROQ_API_KEY): fall through to standard model.
 
     http_client = httpx.AsyncClient(verify=config.verify_ssl)
     client = AsyncOpenAI(

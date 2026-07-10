@@ -1,0 +1,205 @@
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Groq] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+[Groq] TERTIARY key hit 429 rate limit. No more keys to try.
+[Groq] Attempting request with SECONDARY key
+[Groq] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key...
+[Groq] Attempting request with TERTIARY key
+[Groq] TERTIARY key hit 429 rate limit. No more keys to try.
+E[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Groq] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Groq] TERTIARY key hit 429 rate limit. No more keys to try.
+[Groq] [All keys exhausted: PRIMARY \u2192 SECONDARY \u2192 TERTIARY] All API keys hit 429 rate limit.
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key raised a non-429 error (_AuthError); not rotating.
+..[Groq] PRIMARY key raised non-429 error (_AuthError); propagating immediately.
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+.[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Groq] Attempting request with SECONDARY key
+[Groq] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key...
+[Groq] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Groq] Attempting request with TERTIARY key
+[Groq] TERTIARY key hit 429 rate limit. No more keys to try.
+[Groq] TERTIARY key hit 429 rate limit. No more keys to try.
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key succeeded
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+E..[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Groq] Attempting request with SECONDARY key
+[Groq] SECONDARY key succeeded
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+.[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Groq] Attempting request with SECONDARY key
+[Groq] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key...
+[Groq] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Groq] Attempting request with TERTIARY key
+[Groq] TERTIARY key succeeded
+.[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key raised a non-429 error (_AuthError); not rotating.
+.[Groq] PRIMARY key raised non-429 error (_AuthError); propagating immediately.
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+.[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Groq] Attempting request with SECONDARY key
+[Groq] SECONDARY key succeeded
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+.[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Groq] Attempting request with SECONDARY key
+[Groq] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key...
+[Groq] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Groq] Attempting request with TERTIARY key
+[Groq] TERTIARY key succeeded
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key succeeded
+...[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Groq] Attempting request with PRIMARY key
+[Groq] PRIMARY key raised a non-429 error (_ServerError); not rotating.
+.[Groq] PRIMARY key raised non-429 error (_ServerError); propagating immediately.
+..[Groq] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Groq] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+........................[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] Attempting request with SECONDARY key
+[Mistral] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key...
+[Mistral] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Mistral] Attempting request with TERTIARY key
+[Mistral] TERTIARY key hit 429 rate limit. No more keys to try.
+[Mistral] TERTIARY key hit 429 rate limit. No more keys to try.
+E[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Mistral] TERTIARY key hit 429 rate limit. No more keys to try.
+[Mistral] [All keys exhausted: PRIMARY \u2192 SECONDARY \u2192 TERTIARY] All API keys hit 429 rate limit.
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+..[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] Attempting request with SECONDARY key
+[Mistral] SECONDARY key succeeded
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+.[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] Attempting request with SECONDARY key
+[Mistral] SECONDARY key succeeded
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key raised a non-429 error (_AuthError); not rotating.
+.[Mistral] PRIMARY key raised non-429 error (_AuthError); propagating immediately.
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+.[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] Attempting request with SECONDARY key
+[Mistral] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key...
+[Mistral] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Mistral] Attempting request with TERTIARY key
+[Mistral] TERTIARY key hit 429 rate limit. No more keys to try.
+[Mistral] TERTIARY key hit 429 rate limit. No more keys to try.
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key succeeded
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+E..[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] Attempting request with SECONDARY key
+[Mistral] SECONDARY key succeeded
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+.[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] Attempting request with SECONDARY key
+[Mistral] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key...
+[Mistral] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Mistral] Attempting request with TERTIARY key
+[Mistral] TERTIARY key succeeded
+.[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key raised a non-429 error (_AuthError); not rotating.
+.[Mistral] PRIMARY key raised non-429 error (_AuthError); propagating immediately.
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+.[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] Attempting request with SECONDARY key
+[Mistral] SECONDARY key succeeded
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key...
+.[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] Attempting request with SECONDARY key
+[Mistral] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key...
+[Mistral] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+[Mistral] Attempting request with TERTIARY key
+[Mistral] TERTIARY key succeeded
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key succeeded
+...[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] Attempting request with PRIMARY key
+[Mistral] PRIMARY key raised a non-429 error (_ServerError); not rotating.
+.[Mistral] PRIMARY key raised non-429 error (_ServerError); propagating immediately.
+..[Mistral] PRIMARY key hit 429 rate limit. Rotating to SECONDARY key.
+[Mistral] SECONDARY key hit 429 rate limit. Rotating to TERTIARY key.
+.
+======================================================================
+ERROR: test_all_keys_429_raises_configuration_error (tests.test_llm_provider.GroqFallbackTests.test_all_keys_429_raises_configuration_error)
+All three keys return 429; raises LLMConfigurationError.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\tuskakka\code\indian-stock-ai-agent\tests\test_llm_provider.py", line 599, in test_all_keys_429_raises_configuration_error
+    _call_groq_with_fallback(
+  File "C:\Users\tuskakka\code\indian-stock-ai-agent\llm_provider.py", line 320, in _call_groq_with_fallback
+    print(
+  File "C:\Program Files\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 36: character maps to <undefined>
+
+======================================================================
+ERROR: test_groq_fallback_raises_on_all_429 (tests.test_llm_provider.GroqFallbackTests.test_groq_fallback_raises_on_all_429)
+Alias: All three keys return 429; raises LLMConfigurationError.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\tuskakka\code\indian-stock-ai-agent\tests\test_llm_provider.py", line 760, in test_groq_fallback_raises_on_all_429
+    self.test_all_keys_429_raises_configuration_error()
+  File "C:\Users\tuskakka\code\indian-stock-ai-agent\tests\test_llm_provider.py", line 599, in test_all_keys_429_raises_configuration_error
+    _call_groq_with_fallback(
+  File "C:\Users\tuskakka\code\indian-stock-ai-agent\llm_provider.py", line 320, in _call_groq_with_fallback
+    print(
+  File "C:\Program Files\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 36: character maps to <undefined>
+
+======================================================================
+ERROR: test_all_keys_429_raises_configuration_error (tests.test_llm_provider.MistralFallbackTests.test_all_keys_429_raises_configuration_error)
+All three keys return 429; raises LLMConfigurationError.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\tuskakka\code\indian-stock-ai-agent\tests\test_llm_provider.py", line 338, in test_all_keys_429_raises_configuration_error
+    _call_mistral_with_fallback(
+  File "C:\Users\tuskakka\code\indian-stock-ai-agent\llm_provider.py", line 170, in _call_mistral_with_fallback
+    print(
+  File "C:\Program Files\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 39: character maps to <undefined>
+
+======================================================================
+ERROR: test_mistral_fallback_raises_on_all_429 (tests.test_llm_provider.MistralFallbackTests.test_mistral_fallback_raises_on_all_429)
+Alias: All three keys return 429; raises LLMConfigurationError.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\tuskakka\code\indian-stock-ai-agent\tests\test_llm_provider.py", line 523, in test_mistral_fallback_raises_on_all_429
+    self.test_all_keys_429_raises_configuration_error()
+  File "C:\Users\tuskakka\code\indian-stock-ai-agent\tests\test_llm_provider.py", line 338, in test_all_keys_429_raises_configuration_error
+    _call_mistral_with_fallback(
+  File "C:\Users\tuskakka\code\indian-stock-ai-agent\llm_provider.py", line 170, in _call_mistral_with_fallback
+    print(
+  File "C:\Program Files\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 39: character maps to <undefined>
+
+----------------------------------------------------------------------
+Ran 63 tests in 2.260s
+
+FAILED (errors=4)

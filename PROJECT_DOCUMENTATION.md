@@ -546,7 +546,37 @@ Status: queued → running → done / failed
 | `pydantic` | ≥ 2.0.0 | Data validation and schemas |
 | `python-dateutil` | ≥ 2.8.0 | Date parsing |
 
-### 8.4 API Requirements
+### 8.4 LLM Provider Configuration
+
+The system is designed to be BYOLLM (Bring Your Own Large Language Model) compatible. By default, it uses OpenAI's GPT-4o-mini, but can be configured to use alternative providers:
+
+| Provider | Configuration | Fallback Support |
+|---|---|---|
+| **OpenAI** | `LLM_PROVIDER=openai`, `OPENAI_API_KEY=...` | No (native endpoint) |
+| **Groq** | `LLM_PROVIDER=groq`, `GROQ_API_KEY_PRIMARY=...` | ✅ 3-key chain (primary → secondary → tertiary) |
+| **Mistral** | `LLM_PROVIDER=mistral`, `MISTRAL_API_KEY_PRIMARY=...` | ✅ 3-key chain (primary → secondary → tertiary) |
+| **OpenRouter** | `LLM_PROVIDER=openrouter`, `OPENROUTER_API_KEY=...` | No |
+| **Ollama (local)** | `LLM_PROVIDER=ollama`, `OLLAMA_BASE_URL=http://localhost:11434/v1/` | No |
+| **Custom** | `LLM_PROVIDER=custom`, `LLM_BASE_URL=...`, `LLM_API_KEY=...` | No |
+
+#### Rate-Limit Fallback (Groq & Mistral)
+
+Groq and Mistral support automatic fallback to secondary and tertiary API keys when the primary key is rate-limited (HTTP 429 error). This is critical for free-tier users who hit per-minute request limits.
+
+**Setup example (Groq):**
+```bash
+LLM_PROVIDER=groq
+GROQ_API_KEY_PRIMARY=your_primary_key_here
+GROQ_API_KEY_SECONDARY=your_secondary_key_here   # Optional; used if PRIMARY hits 429
+GROQ_API_KEY_TERTIARY=your_tertiary_key_here    # Optional; used if SECONDARY hits 429
+```
+
+**Fallback behaviour:**
+- Fallback **only** on HTTP 429 (rate-limit). Other errors (auth failure, network, etc.) are raised immediately.
+- Key slot names (PRIMARY, SECONDARY, TERTIARY) are logged; actual key values are never logged.
+- Each key is tried at most once per request.
+
+### 8.5 API Requirements
 
 | Service | Requirement |
 |---|---|

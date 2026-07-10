@@ -7,6 +7,7 @@ import llm_provider
 from llm_provider import (
     LLMConfigurationError,
     _call_mistral_with_fallback,
+    _call_groq_with_fallback,
     _is_rate_limit_error,
     clear_provider_cache,
     load_llm_config,
@@ -29,10 +30,16 @@ class LLMProviderConfigTests(unittest.TestCase):
             "OPENAI_API_KEY": "",
             "OPENAI_BASE_URL": "",
             "GROQ_API_KEY": "",
+            "GROQ_API_KEY_PRIMARY": "",
+            "GROQ_API_KEY_SECONDARY": "",
+            "GROQ_API_KEY_TERTIARY": "",
             "OPENROUTER_API_KEY": "",
             "OPENROUTER_SITE_URL": "",
             "OPENROUTER_APP_NAME": "",
             "MISTRAL_API_KEY": "",
+            "MISTRAL_API_KEY_PRIMARY": "",
+            "MISTRAL_API_KEY_SECONDARY": "",
+            "MISTRAL_API_KEY_TERTIARY": "",
             "OLLAMA_BASE_URL": "",
             "OLLAMA_API_KEY": "",
             "LLM_VERIFY_SSL": "",
@@ -60,6 +67,30 @@ class LLMProviderConfigTests(unittest.TestCase):
             self.assertEqual(config.base_url, "https://api.groq.com/openai/v1")
             self.assertTrue(config.disable_tracing)
 
+    def test_groq_primary_secondary_tertiary_fallback_config(self):
+        """Groq with multiple API keys builds fallback chain; primary is used for config."""
+        with self.env(
+            LLM_PROVIDER="groq",
+            MODEL_NAME="llama-3.3-70b-versatile",
+            GROQ_API_KEY_PRIMARY="gsk-primary",
+            GROQ_API_KEY_SECONDARY="gsk-secondary",
+            GROQ_API_KEY_TERTIARY="gsk-tertiary",
+        ):
+            config = load_llm_config()
+            self.assertEqual(config.api_key, "gsk-primary")
+            self.assertEqual(config.base_url, "https://api.groq.com/openai/v1")
+
+    def test_groq_legacy_key_as_fallback(self):
+        """Groq falls back to legacy GROQ_API_KEY when named keys are not set."""
+        with self.env(
+            LLM_PROVIDER="groq",
+            MODEL_NAME="llama-3.3-70b-versatile",
+            GROQ_API_KEY="gsk-legacy",
+        ):
+            config = load_llm_config()
+            self.assertEqual(config.api_key, "gsk-legacy")
+
+
     def test_openrouter_adds_optional_attribution_headers(self):
         with self.env(
             LLM_PROVIDER="openrouter",
@@ -80,6 +111,29 @@ class LLMProviderConfigTests(unittest.TestCase):
             MISTRAL_API_KEY="mis-test",
         ):
             self.assertEqual(load_llm_config().base_url, "https://api.mistral.ai/v1")
+
+    def test_mistral_primary_secondary_tertiary_fallback_config(self):
+        """Mistral with multiple API keys builds fallback chain; primary is used for config."""
+        with self.env(
+            LLM_PROVIDER="mistral",
+            MODEL_NAME="mistral-large-latest",
+            MISTRAL_API_KEY_PRIMARY="mis-primary",
+            MISTRAL_API_KEY_SECONDARY="mis-secondary",
+            MISTRAL_API_KEY_TERTIARY="mis-tertiary",
+        ):
+            config = load_llm_config()
+            self.assertEqual(config.api_key, "mis-primary")
+            self.assertEqual(config.base_url, "https://api.mistral.ai/v1")
+
+    def test_mistral_legacy_key_as_fallback(self):
+        """Mistral falls back to legacy MISTRAL_API_KEY when named keys are not set."""
+        with self.env(
+            LLM_PROVIDER="mistral",
+            MODEL_NAME="mistral-large-latest",
+            MISTRAL_API_KEY="mis-legacy",
+        ):
+            config = load_llm_config()
+            self.assertEqual(config.api_key, "mis-legacy")
 
     def test_ollama_uses_local_base_url_and_dummy_key(self):
         with self.env(LLM_PROVIDER="ollama", MODEL_NAME="llama3.1"):
@@ -473,6 +527,243 @@ class MistralFallbackTests(unittest.TestCase):
         self.test_non_429_error_does_not_rotate()
 
     def test_mistral_fallback_raises_when_no_keys(self):
+        """Alias: Empty key list raises LLMConfigurationError immediately."""
+        self.test_empty_key_list_raises_immediately()
+
+
+class GroqFallbackTests(unittest.TestCase):
+    """Unit tests for _call_groq_with_fallback."""
+
+    def _make_fn(self, side_effects: list):
+        """Return a mock callable whose successive calls raise or return the given values."""
+        mock = MagicMock(side_effect=side_effects)
+        return mock
+
+    # ------------------------------------------------------------------
+    # Key rotation behaviour
+    # ------------------------------------------------------------------
+
+    def test_primary_key_success_no_rotation(self):
+        """Primary key works; secondary and tertiary are never called."""
+        expected = {"result": "ok"}
+        fn = self._make_fn([expected])
+        result = _call_groq_with_fallback(
+            fn,
+            api_keys=["key-primary", "key-secondary", "key-tertiary"],
+            key_labels=["primary", "secondary", "tertiary"],
+        )
+        self.assertEqual(result, expected)
+        fn.assert_called_once_with("key-primary")
+
+    def test_primary_429_rotates_to_secondary(self):
+        """Primary returns 429; secondary succeeds; tertiary never called."""
+        expected = {"result": "secondary ok"}
+        fn = self._make_fn([_RateLimitError("rate limited"), expected])
+        result = _call_groq_with_fallback(
+            fn,
+            api_keys=["key-primary", "key-secondary", "key-tertiary"],
+            key_labels=["primary", "secondary", "tertiary"],
+        )
+        self.assertEqual(result, expected)
+        self.assertEqual(fn.call_count, 2)
+        fn.assert_any_call("key-primary")
+        fn.assert_any_call("key-secondary")
+
+    def test_primary_and_secondary_429_rotates_to_tertiary(self):
+        """Primary and secondary return 429; tertiary succeeds."""
+        expected = {"result": "tertiary ok"}
+        fn = self._make_fn(
+            [_RateLimitError("rate limited"), _RateLimitError("rate limited"), expected]
+        )
+        result = _call_groq_with_fallback(
+            fn,
+            api_keys=["key-primary", "key-secondary", "key-tertiary"],
+            key_labels=["primary", "secondary", "tertiary"],
+        )
+        self.assertEqual(result, expected)
+        self.assertEqual(fn.call_count, 3)
+        fn.assert_any_call("key-primary")
+        fn.assert_any_call("key-secondary")
+        fn.assert_any_call("key-tertiary")
+
+    def test_all_keys_429_raises_configuration_error(self):
+        """All three keys return 429; raises LLMConfigurationError."""
+        fn = self._make_fn(
+            [
+                _RateLimitError("rate limited"),
+                _RateLimitError("rate limited"),
+                _RateLimitError("rate limited"),
+            ]
+        )
+        with self.assertRaises(LLMConfigurationError) as ctx:
+            _call_groq_with_fallback(
+                fn,
+                api_keys=["key-primary", "key-secondary", "key-tertiary"],
+                key_labels=["primary", "secondary", "tertiary"],
+            )
+        self.assertIn("exhausted", str(ctx.exception).lower())
+        self.assertEqual(fn.call_count, 3)
+
+    def test_non_429_error_does_not_rotate(self):
+        """Primary returns a non-429 error; raises immediately without trying secondary.
+
+        The error is now re-raised as RuntimeError with '[Key: PRIMARY]' context embedded
+        in the message so it surfaces in user-facing output.
+        """
+        fn = self._make_fn([_AuthError("invalid api key")])
+        with self.assertRaises(RuntimeError) as ctx:
+            _call_groq_with_fallback(
+                fn,
+                api_keys=["key-primary", "key-secondary", "key-tertiary"],
+                key_labels=["primary", "secondary", "tertiary"],
+            )
+        # Only the primary key was attempted.
+        fn.assert_called_once_with("key-primary")
+        # The error message must include the key slot name.
+        self.assertIn("[Key: PRIMARY]", str(ctx.exception))
+
+    def test_server_error_does_not_rotate(self):
+        """A 500 server error on primary does NOT trigger key rotation.
+
+        The error is now re-raised as RuntimeError with '[Key: PRIMARY]' context embedded
+        in the message so it surfaces in user-facing output.
+        """
+        fn = self._make_fn([_ServerError("internal server error")])
+        with self.assertRaises(RuntimeError) as ctx:
+            _call_groq_with_fallback(
+                fn,
+                api_keys=["key-primary", "key-secondary", "key-tertiary"],
+                key_labels=["primary", "secondary", "tertiary"],
+            )
+        fn.assert_called_once_with("key-primary")
+        # The error message must include the key slot name.
+        self.assertIn("[Key: PRIMARY]", str(ctx.exception))
+
+    def test_empty_key_list_raises_immediately(self):
+        """Empty key list raises LLMConfigurationError immediately."""
+        fn = self._make_fn([])
+        with self.assertRaises(LLMConfigurationError):
+            _call_groq_with_fallback(fn, api_keys=[], key_labels=[])
+        fn.assert_not_called()
+
+    # ------------------------------------------------------------------
+    # Key slot logging verification
+    # ------------------------------------------------------------------
+
+    def test_primary_slot_logged_on_attempt(self):
+        """[Groq] Attempting request with PRIMARY key is printed on first attempt."""
+        fn = self._make_fn([{"result": "ok"}])
+        with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+            _call_groq_with_fallback(
+                fn,
+                api_keys=["key-primary"],
+                key_labels=["primary"],
+            )
+            output = mock_stdout.getvalue()
+        self.assertIn("[Groq] Attempting request with PRIMARY key", output)
+
+    def test_secondary_slot_logged_after_primary_429(self):
+        """After primary 429, logs show rotation to SECONDARY and attempt with SECONDARY."""
+        fn = self._make_fn([_RateLimitError("rate limited"), {"result": "ok"}])
+        with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+            _call_groq_with_fallback(
+                fn,
+                api_keys=["key-primary", "key-secondary"],
+                key_labels=["primary", "secondary"],
+            )
+            output = mock_stdout.getvalue()
+        self.assertIn("[Groq] Attempting request with PRIMARY key", output)
+        self.assertIn("PRIMARY key hit 429 rate limit", output)
+        self.assertIn("Rotating to SECONDARY key", output)
+        self.assertIn("[Groq] Attempting request with SECONDARY key", output)
+
+    def test_tertiary_slot_logged_after_secondary_429(self):
+        """After primary and secondary 429, logs show rotation to TERTIARY."""
+        fn = self._make_fn(
+            [_RateLimitError("rate limited"), _RateLimitError("rate limited"), {"result": "ok"}]
+        )
+        with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+            _call_groq_with_fallback(
+                fn,
+                api_keys=["key-primary", "key-secondary", "key-tertiary"],
+                key_labels=["primary", "secondary", "tertiary"],
+            )
+            output = mock_stdout.getvalue()
+        self.assertIn("[Groq] Attempting request with TERTIARY key", output)
+        self.assertIn("Rotating to TERTIARY key", output)
+
+    def test_all_keys_exhausted_logged(self):
+        """When all keys are exhausted, the exhaustion message is printed and the
+        raised LLMConfigurationError includes the key chain in its message."""
+        fn = self._make_fn(
+            [
+                _RateLimitError("rate limited"),
+                _RateLimitError("rate limited"),
+                _RateLimitError("rate limited"),
+            ]
+        )
+        with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+            with self.assertRaises(LLMConfigurationError) as ctx:
+                _call_groq_with_fallback(
+                    fn,
+                    api_keys=["key-primary", "key-secondary", "key-tertiary"],
+                    key_labels=["primary", "secondary", "tertiary"],
+                )
+            output = mock_stdout.getvalue()
+        self.assertIn("All API keys hit 429 rate limit", output)
+        # The raised exception must include the key chain for user-facing output.
+        self.assertIn("[All keys exhausted: PRIMARY", str(ctx.exception))
+
+    def test_no_api_key_values_in_logs(self):
+        """Actual API key values must NEVER appear in the printed output."""
+        fn = self._make_fn([_RateLimitError("rate limited"), {"result": "ok"}])
+        with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+            _call_groq_with_fallback(
+                fn,
+                api_keys=["secret-key-abc123", "secret-key-xyz789"],
+                key_labels=["primary", "secondary"],
+            )
+            output = mock_stdout.getvalue()
+        self.assertNotIn("secret-key-abc123", output)
+        self.assertNotIn("secret-key-xyz789", output)
+
+    def test_success_logged_after_attempt(self):
+        """Success message is printed after a successful key attempt."""
+        fn = self._make_fn([{"result": "ok"}])
+        with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+            _call_groq_with_fallback(
+                fn,
+                api_keys=["key-primary"],
+                key_labels=["primary"],
+            )
+            output = mock_stdout.getvalue()
+        self.assertIn("PRIMARY key succeeded", output)
+
+    # ------------------------------------------------------------------
+    # Backward-compatibility: existing test method names preserved
+    # ------------------------------------------------------------------
+
+    def test_groq_fallback_uses_primary_on_success(self):
+        """Alias: Primary key works; secondary and tertiary are never called."""
+        self.test_primary_key_success_no_rotation()
+
+    def test_groq_fallback_uses_secondary_on_primary_429(self):
+        """Alias: Primary returns 429; secondary succeeds; tertiary never called."""
+        self.test_primary_429_rotates_to_secondary()
+
+    def test_groq_fallback_uses_tertiary_on_secondary_429(self):
+        """Alias: Primary and secondary return 429; tertiary succeeds."""
+        self.test_primary_and_secondary_429_rotates_to_tertiary()
+
+    def test_groq_fallback_raises_on_all_429(self):
+        """Alias: All three keys return 429; raises LLMConfigurationError."""
+        self.test_all_keys_429_raises_configuration_error()
+
+    def test_groq_fallback_no_rotation_on_non_429(self):
+        """Alias: Primary returns a non-429 error; raises immediately without trying secondary."""
+        self.test_non_429_error_does_not_rotate()
+
+    def test_groq_fallback_raises_when_no_keys(self):
         """Alias: Empty key list raises LLMConfigurationError immediately."""
         self.test_empty_key_list_raises_immediately()
 
