@@ -237,6 +237,46 @@ GROQ_API_KEY_TERTIARY=your_tertiary_groq_api_key_here
 
 You can obtain free Groq API keys at <https://console.groq.com/>. Create multiple accounts to get additional keys for the fallback chain.
 
+### Rate Limit Wait & Retry
+
+When all three API keys (PRIMARY, SECONDARY, TERTIARY) are exhausted due to HTTP 429 rate-limit errors, the system can automatically wait and retry instead of raising an error immediately. This is useful for handling temporary rate limiting.
+
+#### How it works
+
+```
+All keys exhausted (429) → Wait for cooldown period → Retry from PRIMARY key
+                                                                      │
+                                                                      ├─ Success → done
+                                                                      └─ HTTP 429 → wait again (up to MAX_RETRY_ATTEMPTS)
+```
+
+#### Configuration
+
+Add these variables to your `.env` file to control the wait-and-retry behavior:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ENABLE_RATE_LIMIT_WAIT` | `true` | Set to `false` to disable wait-and-retry (raises error immediately) |
+| `RATE_LIMIT_WAIT_SECONDS` | `60` | Seconds to wait when all keys are exhausted |
+| `MAX_RETRY_ATTEMPTS` | `1000` | Maximum number of retry cycles before giving up |
+
+#### Key behaviors
+
+- Each key has its own cooldown period. When a key hits 429, it's marked as "in cooldown" for the configured wait time and won't be retried until the cooldown expires.
+- After all keys are exhausted (either due to 429 errors or being in cooldown), the system waits for the configured duration and then retries starting from the PRIMARY key.
+- On successful response, all cooldowns are cleared.
+- The wait duration is logged for debugging purposes.
+- No countdown is shown in the console during the wait period.
+
+#### Example scenario
+
+1. PRIMARY key hits 429 → cooldown set for 60s, rotate to SECONDARY
+2. SECONDARY key hits 429 → cooldown set for 60s, rotate to TERTIARY  
+3. TERTIARY key hits 429 → all keys exhausted
+4. System waits 60 seconds, clears all cooldowns, retries from PRIMARY
+5. If PRIMARY is still in its original 60s cooldown period, it's skipped and SECONDARY is tried
+6. This continues until a key succeeds or `MAX_RETRY_ATTEMPTS` is reached
+
 ## Usage
 
 ### Interactive Mode

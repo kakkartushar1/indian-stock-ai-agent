@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 import os
+import time
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Callable
@@ -79,6 +80,34 @@ def _custom_base_url(provider: str, default: str | None = None) -> str | None:
     if provider == "openai":
         return _env("LLM_BASE_URL") or _env("OPENAI_BASE_URL") or default
     return _env("LLM_BASE_URL") or default
+
+
+# Rate Limit Wait & Retry Configuration
+def _env_int(name: str, default: int) -> int:
+    """Parse an environment variable as an integer, returning default if invalid."""
+    raw = _env(name)
+    if not raw:
+        return default
+    try:
+        return int(raw)
+    except ValueError:
+        logger.warning("Invalid integer value for %s: %r, using default %d", name, raw, default)
+        return default
+
+
+def is_rate_limit_wait_enabled() -> bool:
+    """Return True if rate-limit wait-and-retry is enabled."""
+    return _env_bool("ENABLE_RATE_LIMIT_WAIT", True)
+
+
+def get_rate_limit_wait_seconds() -> int:
+    """Return the number of seconds to wait when all keys are exhausted."""
+    return _env_int("RATE_LIMIT_WAIT_SECONDS", 60)
+
+
+def get_max_retry_attempts() -> int:
+    """Return the maximum number of retry attempts after all keys are exhausted."""
+    return _env_int("MAX_RETRY_ATTEMPTS", 1000)
 
 
 def _call_mistral_with_fallback(
@@ -229,6 +258,70 @@ def _is_rate_limit_error(exc: Exception) -> bool:
     # 6. Fallback: inspect the string representation for common rate-limit signals.
     msg = str(exc).lower()
     return "429" in msg or "rate limit" in msg or "rate_limit" in msg or "rate_limited" in msg
+
+
+def _is_payload_too_large_error(exc: Exception) -> bool:
+    """Return True if *exc* represents an HTTP 413 / payload too large error.
+
+    This includes errors where the request exceeds the model's context limit.
+    """
+    # 1. Direct status_code attribute
+    status_code = getattr(exc, "status_code", None)
+    if status_code == 413:
+        return True
+
+    # 2. Nested response.status_code
+    response = getattr(exc, "response", None)
+    if response is not None:
+        resp_status = getattr(response, "status_code", None)
+        if resp_status == 413:
+            return True
+
+    # 3. Check error body for 413
+    body = getattr(exc, "body", None)
+    if isinstance(body, dict):
+        if body.get("raw_status_code") == 413:
+            return True
+
+    # 4. Fallback: inspect string representation for 413 signals
+    msg = str(exc).lower()
+    return "413" in msg or "payload too large" in msg or "too many tokens" in msg or "context length" in msg
+
+
+def _extract_max_tokens_from_error(exc: Exception) -> int | None:
+    """Extract the max tokens limit from a 413 error message.
+
+    Looks for patterns like "maximum context length is 8000 tokens"
+    or "max tokens is 8000" in the error message.
+
+    Returns:
+        The token limit if found, None otherwise.
+    """
+    import re
+
+    msg = str(exc)
+
+    # Pattern 1: "maximum context length is X tokens"
+    match = re.search(r"maximum context length is (\d+) tokens", msg, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+
+    # Pattern 2: "max.*?(\d+) tokens"
+    match = re.search(r"max[^\d]*(\d+)\s+tokens", msg, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+
+    # Pattern 3: "context window of X tokens"
+    match = re.search(r"context window of (\d+) tokens", msg, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+
+    # Pattern 4: "limit.*?(\d+)"
+    match = re.search(r"limit[^\d]*(\d+)", msg, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+
+    return None
 
 
 def _call_groq_with_fallback(
@@ -486,6 +579,9 @@ class _MistralFallbackModel(_get_mistral_fallback_base()):  # type: ignore[misc]
             )
             for key in api_keys
         ]
+        # Track cooldowns for each key: None means available, timestamp means cooldown until
+        self._key_cooldowns: list[float | None] = [None] * len(api_keys)
+        self._retry_attempts = 0
         # Call super().__init__() with the PRIMARY key's client so that
         # self._client (required by OpenAIChatCompletionsModel) is properly
         # initialised and isinstance(model, Model) is satisfied by the SDK.
@@ -501,75 +597,183 @@ class _MistralFallbackModel(_get_mistral_fallback_base()):  # type: ignore[misc]
         On each attempt ``self._client`` is swapped to the appropriate key's
         AsyncOpenAI client so that the parent-class method uses the correct
         credentials without needing a separate per-key model wrapper.
-        """
-        last_error: Exception | None = None
-        tried_labels: list[str] = []
 
-        for idx, (client, label) in enumerate(zip(self._key_clients, self._key_labels)):
-            tried_labels.append(label)
-            print(f"[Mistral] Attempting request with {label} key", flush=True)
-            logger.info("[Mistral] Attempting request with %s key", label)
-            try:
-                # Swap self._client to the current key's client before delegating
-                # to the parent class method so it uses the correct credentials.
-                self._client = client
-                result = await getattr(super(_MistralFallbackModel, self), method_name)(*args, **kwargs)
-                print(f"[Mistral] {label} key succeeded", flush=True)
-                logger.info("[Mistral] %s key succeeded", label)
-                return result
-            except Exception as exc:  # noqa: BLE001
-                if _is_rate_limit_error(exc):
-                    next_labels = self._key_labels[idx + 1 :]
-                    if next_labels:
-                        next_label = next_labels[0]
-                        print(
-                            f"[Mistral] {label} key hit 429 rate limit. "
-                            f"Rotating to {next_label} key...",
-                            flush=True,
-                        )
-                        logger.warning(
-                            "[Mistral] %s key hit 429 rate limit. Rotating to %s key.",
-                            label,
-                            next_label,
-                        )
-                    else:
-                        print(
-                            f"[Mistral] {label} key hit 429 rate limit. No more keys to try.",
-                            flush=True,
-                        )
-                        logger.warning(
-                            "[Mistral] %s key hit 429 rate limit. No more keys to try.", label
-                        )
-                    last_error = exc
+        If all keys are exhausted due to 429 errors, optionally wait and retry
+        from the PRIMARY key. Each key has its own cooldown period.
+        """
+        wait_seconds = get_rate_limit_wait_seconds()
+        max_retries = get_max_retry_attempts()
+        wait_enabled = is_rate_limit_wait_enabled()
+
+        while True:
+            last_error: Exception | None = None
+            tried_labels: list[str] = []
+            current_time = time.time()
+
+            for idx, (client, label) in enumerate(zip(self._key_clients, self._key_labels)):
+                tried_labels.append(label)
+
+                # Check if this key is still in cooldown from a previous 429 error
+                cooldown_until = self._key_cooldowns[idx]
+                if cooldown_until is not None and current_time < cooldown_until:
+                    remaining = int(cooldown_until - current_time)
+                    print(
+                        f"[Mistral] {label} key is in cooldown ({remaining}s remaining). Skipping.",
+                        flush=True,
+                    )
+                    logger.info("[Mistral] %s key is in cooldown (%ds remaining). Skipping.", label, remaining)
                     continue
 
-                # Non-429 error: propagate immediately with key slot context.
+                print(f"[Mistral] Attempting request with {label} key", flush=True)
+                logger.info("[Mistral] Attempting request with %s key", label)
+                try:
+                    # Swap self._client to the current key's client before delegating
+                    # to the parent class method so it uses the correct credentials.
+                    self._client = client
+                    result = await getattr(super(_MistralFallbackModel, self), method_name)(*args, **kwargs)
+                    print(f"[Mistral] {label} key succeeded", flush=True)
+                    logger.info("[Mistral] %s key succeeded", label)
+                    # Clear cooldown on success
+                    self._key_cooldowns[idx] = None
+                    return result
+                except Exception as exc:  # noqa: BLE001
+                    # Check for HTTP 413 - Payload Too Large (context length exceeded)
+                    if _is_payload_too_large_error(exc):
+                        max_tokens = _extract_max_tokens_from_error(exc)
+                        print(
+                            f"[Mistral] {label} key hit 413 Payload Too Large error: {exc}. "
+                            f"Retrying with reduced tokens (max: {max_tokens})...",
+                            flush=True,
+                        )
+                        logger.warning(
+                            "[Mistral] %s key hit 413 Payload Too Large. Retrying with reduced tokens (max: %s).",
+                            label,
+                            max_tokens,
+                        )
+                        # Retry with max_tokens on the SAME key - don't rotate
+                        try:
+                            self._client = client
+                            # Reduce max_tokens if we found a limit, otherwise use a safe default
+                            reduced_max_tokens = max_tokens - 1000 if max_tokens else 8000
+                            result = await getattr(super(_MistralFallbackModel, self), method_name)(
+                                *args, **kwargs, max_tokens=reduced_max_tokens
+                            )
+                            print(f"[Mistral] {label} key succeeded with reduced tokens", flush=True)
+                            logger.info("[Mistral] %s key succeeded with reduced tokens", label)
+                            return result
+                        except Exception as retry_exc:
+                            # If retry also fails, print the error and continue to next key
+                            print(
+                                f"[Mistral] {label} key retry failed: {type(retry_exc).__name__}: {retry_exc}",
+                                flush=True,
+                            )
+                            logger.error(
+                                "[Mistral] %s key retry failed: %s",
+                                label,
+                                retry_exc,
+                            )
+                            last_error = retry_exc
+                            continue
+
+                    if _is_rate_limit_error(exc):
+                        # Set cooldown for this key (60 seconds from now)
+                        self._key_cooldowns[idx] = time.time() + wait_seconds
+                        next_labels = self._key_labels[idx + 1 :]
+                        if next_labels:
+                            next_label = next_labels[0]
+                            print(
+                                f"[Mistral] {label} key hit 429 rate limit. "
+                                f"Cooldown set for {wait_seconds}s. Rotating to {next_label} key...",
+                                flush=True,
+                            )
+                            logger.warning(
+                                "[Mistral] %s key hit 429 rate limit. Cooldown set for %ds. Rotating to %s key.",
+                                label,
+                                wait_seconds,
+                                next_label,
+                            )
+                        else:
+                            print(
+                                f"[Mistral] {label} key hit 429 rate limit. "
+                                f"Cooldown set for {wait_seconds}s. No more keys to try.",
+                                flush=True,
+                            )
+                            logger.warning(
+                                "[Mistral] %s key hit 429 rate limit. Cooldown set for %ds. No more keys to try.",
+                                label,
+                                wait_seconds,
+                            )
+                        last_error = exc
+                        continue
+
+                    # Non-429, non-413 error: propagate immediately with key slot context.
+                    print(
+                        f"[Mistral] {label} key raised error ({type(exc).__name__}): {exc}; "
+                        "not rotating.",
+                        flush=True,
+                    )
+                    logger.error(
+                        "[Mistral] %s key raised error (%s): %s; propagating immediately.",
+                        label,
+                        type(exc).__name__,
+                        exc,
+                    )
+                    key_context = f"[Key: {label}]"
+                    raise RuntimeError(f"{key_context} {type(exc).__name__}: {exc}") from exc
+
+            # All keys exhausted (either 429 errors or all in cooldown).
+            # Check if wait-and-retry is enabled and we haven't exceeded max retries.
+            if wait_enabled and self._retry_attempts < max_retries:
+                self._retry_attempts += 1
+                key_chain = " -> ".join(tried_labels)
                 print(
-                    f"[Mistral] {label} key raised a non-429 error ({type(exc).__name__}); "
-                    "not rotating.",
+                    f"[Mistral] All keys exhausted: {key_chain}. "
+                    f"Waiting {wait_seconds}s before retry (attempt {self._retry_attempts}/{max_retries})...",
                     flush=True,
                 )
-                logger.error(
-                    "[Mistral] %s key raised non-429 error (%s); propagating immediately.",
-                    label,
-                    type(exc).__name__,
+                logger.warning(
+                    "[Mistral] All keys exhausted: %s. Waiting %ds before retry (attempt %d/%d).",
+                    key_chain,
+                    wait_seconds,
+                    self._retry_attempts,
+                    max_retries,
                 )
-                key_context = f"[Key: {label}]"
-                raise RuntimeError(f"{key_context} {type(exc).__name__}: {exc}") from exc
+                # Log the wait duration for debugging
+                start_wait = time.time()
+                time.sleep(wait_seconds)
+                wait_duration = time.time() - start_wait
+                logger.info("[Mistral] Wait completed after %.2f seconds", wait_duration)
+                # Clear all cooldowns and retry from PRIMARY
+                self._key_cooldowns = [None] * len(self._key_clients)
+                # Continue the outer while loop to retry
+                continue
 
-        # All keys exhausted.
-        key_chain = " -> ".join(tried_labels)  # e.g. PRIMARY -> SECONDARY -> TERTIARY
-        exhausted_context = f"[All keys exhausted: {key_chain}]"
-        print(
-            f"[Mistral] {exhausted_context} All API keys hit 429 rate limit. "
-            "Please wait before retrying or add more API keys.",
-            flush=True,
-        )
-        logger.warning("[Mistral] %s All API keys hit 429 rate limit.", exhausted_context)
-        raise LLMConfigurationError(
-            f"{exhausted_context} All Mistral API keys exhausted due to rate limiting (429). "
-            "Please wait before retrying or add more API keys."
-        ) from last_error
+            # Wait disabled or max retries exceeded - raise the error.
+            key_chain = " -> ".join(tried_labels)  # e.g. PRIMARY -> SECONDARY -> TERTIARY
+            exhausted_context = f"[All keys exhausted: {key_chain}]"
+            if not wait_enabled:
+                print(
+                    f"[Mistral] {exhausted_context} All API keys hit 429 rate limit. "
+                    "Rate limit wait is disabled. Please wait before retrying or add more API keys.",
+                    flush=True,
+                )
+                logger.warning("[Mistral] %s All API keys hit 429 rate limit. Wait disabled.", exhausted_context)
+            else:
+                print(
+                    f"[Mistral] {exhausted_context} All API keys hit 429 rate limit. "
+                    f"Max retry attempts ({max_retries}) reached. Please wait before retrying or add more API keys.",
+                    flush=True,
+                )
+                logger.warning(
+                    "[Mistral] %s All API keys hit 429 rate limit. Max retries (%d) reached.",
+                    exhausted_context,
+                    max_retries,
+                )
+            raise LLMConfigurationError(
+                f"{exhausted_context} All Mistral API keys exhausted due to rate limiting (429). "
+                f"Wait {'disabled' if not wait_enabled else f'max retries ({max_retries}) reached'}. "
+                "Please wait before retrying or add more API keys."
+            ) from last_error
 
     # ------------------------------------------------------------------
     # SDK model interface
@@ -624,6 +828,9 @@ class _GroqFallbackModel(_get_mistral_fallback_base()):  # type: ignore[misc]
             )
             for key in api_keys
         ]
+        # Track cooldowns for each key: None means available, timestamp means cooldown until
+        self._key_cooldowns: list[float | None] = [None] * len(api_keys)
+        self._retry_attempts = 0
         # Call super().__init__() with the PRIMARY key's client so that
         # self._client (required by OpenAIChatCompletionsModel) is properly
         # initialised and isinstance(model, Model) is satisfied by the SDK.
@@ -639,75 +846,183 @@ class _GroqFallbackModel(_get_mistral_fallback_base()):  # type: ignore[misc]
         On each attempt ``self._client`` is swapped to the appropriate key's
         AsyncOpenAI client so that the parent-class method uses the correct
         credentials without needing a separate per-key model wrapper.
-        """
-        last_error: Exception | None = None
-        tried_labels: list[str] = []
 
-        for idx, (client, label) in enumerate(zip(self._key_clients, self._key_labels)):
-            tried_labels.append(label)
-            print(f"[Groq] Attempting request with {label} key", flush=True)
-            logger.info("[Groq] Attempting request with %s key", label)
-            try:
-                # Swap self._client to the current key's client before delegating
-                # to the parent class method so it uses the correct credentials.
-                self._client = client
-                result = await getattr(super(_GroqFallbackModel, self), method_name)(*args, **kwargs)
-                print(f"[Groq] {label} key succeeded", flush=True)
-                logger.info("[Groq] %s key succeeded", label)
-                return result
-            except Exception as exc:  # noqa: BLE001
-                if _is_rate_limit_error(exc):
-                    next_labels = self._key_labels[idx + 1 :]
-                    if next_labels:
-                        next_label = next_labels[0]
-                        print(
-                            f"[Groq] {label} key hit 429 rate limit. "
-                            f"Rotating to {next_label} key...",
-                            flush=True,
-                        )
-                        logger.warning(
-                            "[Groq] %s key hit 429 rate limit. Rotating to %s key.",
-                            label,
-                            next_label,
-                        )
-                    else:
-                        print(
-                            f"[Groq] {label} key hit 429 rate limit. No more keys to try.",
-                            flush=True,
-                        )
-                        logger.warning(
-                            "[Groq] %s key hit 429 rate limit. No more keys to try.", label
-                        )
-                    last_error = exc
+        If all keys are exhausted due to 429 errors, optionally wait and retry
+        from the PRIMARY key. Each key has its own cooldown period.
+        """
+        wait_seconds = get_rate_limit_wait_seconds()
+        max_retries = get_max_retry_attempts()
+        wait_enabled = is_rate_limit_wait_enabled()
+
+        while True:
+            last_error: Exception | None = None
+            tried_labels: list[str] = []
+            current_time = time.time()
+
+            for idx, (client, label) in enumerate(zip(self._key_clients, self._key_labels)):
+                tried_labels.append(label)
+
+                # Check if this key is still in cooldown from a previous 429 error
+                cooldown_until = self._key_cooldowns[idx]
+                if cooldown_until is not None and current_time < cooldown_until:
+                    remaining = int(cooldown_until - current_time)
+                    print(
+                        f"[Groq] {label} key is in cooldown ({remaining}s remaining). Skipping.",
+                        flush=True,
+                    )
+                    logger.info("[Groq] %s key is in cooldown (%ds remaining). Skipping.", label, remaining)
                     continue
 
-                # Non-429 error: propagate immediately with key slot context.
+                print(f"[Groq] Attempting request with {label} key", flush=True)
+                logger.info("[Groq] Attempting request with %s key", label)
+                try:
+                    # Swap self._client to the current key's client before delegating
+                    # to the parent class method so it uses the correct credentials.
+                    self._client = client
+                    result = await getattr(super(_GroqFallbackModel, self), method_name)(*args, **kwargs)
+                    print(f"[Groq] {label} key succeeded", flush=True)
+                    logger.info("[Groq] %s key succeeded", label)
+                    # Clear cooldown on success
+                    self._key_cooldowns[idx] = None
+                    return result
+                except Exception as exc:  # noqa: BLE001
+                    # Check for HTTP 413 - Payload Too Large (context length exceeded)
+                    if _is_payload_too_large_error(exc):
+                        max_tokens = _extract_max_tokens_from_error(exc)
+                        print(
+                            f"[Groq] {label} key hit 413 Payload Too Large error: {exc}. "
+                            f"Retrying with reduced tokens (max: {max_tokens})...",
+                            flush=True,
+                        )
+                        logger.warning(
+                            "[Groq] %s key hit 413 Payload Too Large. Retrying with reduced tokens (max: %s).",
+                            label,
+                            max_tokens,
+                        )
+                        # Retry with max_tokens on the SAME key - don't rotate
+                        try:
+                            self._client = client
+                            # Reduce max_tokens if we found a limit, otherwise use a safe default
+                            reduced_max_tokens = max_tokens - 1000 if max_tokens else 8000
+                            result = await getattr(super(_GroqFallbackModel, self), method_name)(
+                                *args, **kwargs, max_tokens=reduced_max_tokens
+                            )
+                            print(f"[Groq] {label} key succeeded with reduced tokens", flush=True)
+                            logger.info("[Groq] %s key succeeded with reduced tokens", label)
+                            return result
+                        except Exception as retry_exc:
+                            # If retry also fails, print the error and continue to next key
+                            print(
+                                f"[Groq] {label} key retry failed: {type(retry_exc).__name__}: {retry_exc}",
+                                flush=True,
+                            )
+                            logger.error(
+                                "[Groq] %s key retry failed: %s",
+                                label,
+                                retry_exc,
+                            )
+                            last_error = retry_exc
+                            continue
+
+                    if _is_rate_limit_error(exc):
+                        # Set cooldown for this key (60 seconds from now)
+                        self._key_cooldowns[idx] = time.time() + wait_seconds
+                        next_labels = self._key_labels[idx + 1 :]
+                        if next_labels:
+                            next_label = next_labels[0]
+                            print(
+                                f"[Groq] {label} key hit 429 rate limit. "
+                                f"Cooldown set for {wait_seconds}s. Rotating to {next_label} key...",
+                                flush=True,
+                            )
+                            logger.warning(
+                                "[Groq] %s key hit 429 rate limit. Cooldown set for %ds. Rotating to %s key.",
+                                label,
+                                wait_seconds,
+                                next_label,
+                            )
+                        else:
+                            print(
+                                f"[Groq] {label} key hit 429 rate limit. "
+                                f"Cooldown set for {wait_seconds}s. No more keys to try.",
+                                flush=True,
+                            )
+                            logger.warning(
+                                "[Groq] %s key hit 429 rate limit. Cooldown set for %ds. No more keys to try.",
+                                label,
+                                wait_seconds,
+                            )
+                        last_error = exc
+                        continue
+
+                    # Non-429, non-413 error: propagate immediately with key slot context.
+                    print(
+                        f"[Groq] {label} key raised error ({type(exc).__name__}): {exc}; "
+                        "not rotating.",
+                        flush=True,
+                    )
+                    logger.error(
+                        "[Groq] %s key raised error (%s): %s; propagating immediately.",
+                        label,
+                        type(exc).__name__,
+                        exc,
+                    )
+                    key_context = f"[Key: {label}]"
+                    raise RuntimeError(f"{key_context} {type(exc).__name__}: {exc}") from exc
+
+            # All keys exhausted (either 429 errors or all in cooldown).
+            # Check if wait-and-retry is enabled and we haven't exceeded max retries.
+            if wait_enabled and self._retry_attempts < max_retries:
+                self._retry_attempts += 1
+                key_chain = " -> ".join(tried_labels)
                 print(
-                    f"[Groq] {label} key raised a non-429 error ({type(exc).__name__}); "
-                    "not rotating.",
+                    f"[Groq] All keys exhausted: {key_chain}. "
+                    f"Waiting {wait_seconds}s before retry (attempt {self._retry_attempts}/{max_retries})...",
                     flush=True,
                 )
-                logger.error(
-                    "[Groq] %s key raised non-429 error (%s); propagating immediately.",
-                    label,
-                    type(exc).__name__,
+                logger.warning(
+                    "[Groq] All keys exhausted: %s. Waiting %ds before retry (attempt %d/%d).",
+                    key_chain,
+                    wait_seconds,
+                    self._retry_attempts,
+                    max_retries,
                 )
-                key_context = f"[Key: {label}]"
-                raise RuntimeError(f"{key_context} {type(exc).__name__}: {exc}") from exc
+                # Log the wait duration for debugging
+                start_wait = time.time()
+                time.sleep(wait_seconds)
+                wait_duration = time.time() - start_wait
+                logger.info("[Groq] Wait completed after %.2f seconds", wait_duration)
+                # Clear all cooldowns and retry from PRIMARY
+                self._key_cooldowns = [None] * len(self._key_clients)
+                # Continue the outer while loop to retry
+                continue
 
-        # All keys exhausted.
-        key_chain = " -> ".join(tried_labels)  # e.g. PRIMARY -> SECONDARY -> TERTIARY
-        exhausted_context = f"[All keys exhausted: {key_chain}]"
-        print(
-            f"[Groq] {exhausted_context} All API keys hit 429 rate limit. "
-            "Please wait before retrying or add more API keys.",
-            flush=True,
-        )
-        logger.warning("[Groq] %s All API keys hit 429 rate limit.", exhausted_context)
-        raise LLMConfigurationError(
-            f"{exhausted_context} All Groq API keys exhausted due to rate limiting (429). "
-            "Please wait before retrying or add more API keys."
-        ) from last_error
+            # Wait disabled or max retries exceeded - raise the error.
+            key_chain = " -> ".join(tried_labels)  # e.g. PRIMARY -> SECONDARY -> TERTIARY
+            exhausted_context = f"[All keys exhausted: {key_chain}]"
+            if not wait_enabled:
+                print(
+                    f"[Groq] {exhausted_context} All API keys hit 429 rate limit. "
+                    "Rate limit wait is disabled. Please wait before retrying or add more API keys.",
+                    flush=True,
+                )
+                logger.warning("[Groq] %s All API keys hit 429 rate limit. Wait disabled.", exhausted_context)
+            else:
+                print(
+                    f"[Groq] {exhausted_context} All API keys hit 429 rate limit. "
+                    f"Max retry attempts ({max_retries}) reached. Please wait before retrying or add more API keys.",
+                    flush=True,
+                )
+                logger.warning(
+                    "[Groq] %s All API keys hit 429 rate limit. Max retries (%d) reached.",
+                    exhausted_context,
+                    max_retries,
+                )
+            raise LLMConfigurationError(
+                f"{exhausted_context} All Groq API keys exhausted due to rate limiting (429). "
+                f"Wait {'disabled' if not wait_enabled else f'max retries ({max_retries}) reached'}. "
+                "Please wait before retrying or add more API keys."
+            ) from last_error
 
     # ------------------------------------------------------------------
     # SDK model interface
